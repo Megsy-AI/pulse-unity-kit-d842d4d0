@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { FolderKanban, Gem, ListChecks, MessageCircle, PanelsTopLeft, Settings, UserRoundCog } from "lucide-react";
+import { FolderKanban, ListChecks, MessageCircle, PanelsTopLeft, Settings, UserRoundCog } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useNomi } from "../store";
 import { NomiAvatar } from "../avatar/NomiAvatar";
+import { PremiumStar } from "./PremiumStar";
 
 const NAV = [
   { to: "/chat", key: "chat", icon: MessageCircle },
@@ -21,29 +22,29 @@ function SidebarContent({ close }: { close: () => void }) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="px-2 pb-8 pt-3">
+      <div className="px-3 pb-7 pt-2">
         <span className="nomi-pixel-wordmark text-2xl font-black tracking-[0.18em]">NOMI</span>
       </div>
-      <nav className="space-y-1.5">
+      <nav className="space-y-0.5">
         {NAV.map(({ to, key, icon: Icon }) => (
-          <NavLink key={to} to={to} onClick={close} className={({ isActive }) => cn("flex h-12 items-center gap-3 rounded-2xl px-4 text-sm font-semibold transition-all duration-200", isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
+          <NavLink key={to} to={to} onClick={close} className={({ isActive }) => cn("flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-all duration-200", isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground")}>
             <Icon className="size-[18px]" strokeWidth={1.9} />
             {t(key)}
           </NavLink>
         ))}
       </nav>
 
-      <div className="mt-6 space-y-1.5 border-t border-border pt-5">
-        <NavLink to="/accounts" onClick={close} className={({ isActive }) => cn("flex h-12 items-center gap-3 rounded-2xl px-4 text-sm font-semibold transition-colors", isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
+      <div className="mt-5 space-y-0.5 border-t border-border pt-4">
+        <NavLink to="/accounts" onClick={close} className={({ isActive }) => cn("flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors", isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground")}>
           <UserRoundCog className="size-[18px]" />{ar ? "حسابات الوكيل" : "Agent accounts"}
         </NavLink>
-        <NavLink to="/settings" onClick={close} className={({ isActive }) => cn("flex h-12 items-center gap-3 rounded-2xl px-4 text-sm font-semibold transition-colors", isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
+        <NavLink to="/settings" onClick={close} className={({ isActive }) => cn("flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors", isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground")}>
           <Settings className="size-[18px]" />{t("settings")}
         </NavLink>
       </div>
 
-      <NavLink to="/settings" onClick={close} className="mt-auto flex items-center gap-3 rounded-2xl border border-border bg-card p-3 transition-colors hover:bg-secondary">
-        <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-secondary"><NomiAvatar companion={companion} size={50} floating={false} /></span>
+      <NavLink to="/settings" onClick={close} className="mt-auto flex items-center gap-3 rounded-2xl bg-secondary/60 p-2.5 transition-colors hover:bg-secondary">
+        <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-card"><NomiAvatar companion={companion} size={54} floating={false} /></span>
         <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{userName}</span><span className="block truncate text-xs text-muted-foreground">{session?.user?.email || (ar ? "وضع الضيف" : "Guest mode")}</span></span>
       </NavLink>
     </div>
@@ -62,17 +63,19 @@ export function NomiShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <header className="relative z-20 flex h-16 shrink-0 items-center justify-between bg-transparent px-4 md:px-6">
-        <Button variant="outline" size="icon" className="size-10 border-border bg-card shadow-none" onClick={() => setMenuOpen(true)} aria-label={ar ? "فتح القائمة" : "Open menu"}>
+        <Button variant="ghost" size="icon" className="size-10 border-0 bg-transparent shadow-none hover:bg-transparent" onClick={() => setMenuOpen(true)} aria-label={ar ? "فتح القائمة" : "Open menu"}>
           <PanelsTopLeft className="size-[18px]" />
         </Button>
         <div className="flex items-center gap-2">
           <div className="hidden items-center gap-2 sm:flex"><NomiAvatar companion={companion} pose="celebrate" size={44} floating={false} className="nomi-header-bob" /><span className="text-xs font-semibold text-muted-foreground">{ar ? "جرّب قدرات أكثر" : "More from Nomi"}</span></div>
-          <Button size="sm" className="h-10 px-4"><Gem className="size-4" />Get premium</Button>
+          <Button asChild variant="ghost" size="sm" className="h-10 gap-1.5 border-0 bg-transparent px-2.5 text-foreground shadow-none hover:bg-secondary/60">
+            <NavLink to="/premium"><PremiumStar className="size-7" /><span>Premium</span></NavLink>
+          </Button>
         </div>
       </header>
       <div className="min-h-0 flex-1">{children}</div>
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent side={ar ? "right" : "left"} className="w-[310px] border-0 p-5 sm:max-w-[310px]">
+        <SheetContent side={ar ? "right" : "left"} className="w-[300px] border-0 bg-background p-4 shadow-[var(--shadow-navigation)] sm:max-w-[300px]">
           <SheetTitle className="sr-only">{ar ? "القائمة" : "Navigation"}</SheetTitle>
           <SidebarContent close={() => setMenuOpen(false)} />
         </SheetContent>
