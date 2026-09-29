@@ -2,21 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDown, Menu, X } from "lucide-react";
-import Lenis from "lenis";
 import { Button } from "@/components/ui/button";
 import messagingImg from "@/assets/landing/messaging.webp.asset.json";
 import browserImg from "@/assets/landing/browser.webp.asset.json";
 import approvalsImg from "@/assets/landing/approvals.webp.asset.json";
 import goalsImg from "@/assets/landing/goals.webp.asset.json";
-import secureImg from "@/assets/landing/secure-storage.webp.asset.json";
 import connectorsImg from "@/assets/landing/connectors.webp.asset.json";
 import checksImg from "@/assets/landing/nomi-checks.png.asset.json";
-import lavender from "@/assets/nomi-look-lavender.webp";
-import mint from "@/assets/nomi-look-mint.webp";
-import peach from "@/assets/nomi-look-peach.webp";
 import ivory from "@/assets/nomi-look-ivory.webp";
-
-const heroLooks = [ivory, peach, mint, lavender];
 
 function CheckMark({ className = "" }: { className?: string }) {
   return (
@@ -81,16 +74,6 @@ export default function LandingPage() {
     return () => window.clearInterval(timer);
   }, []);
 
-  // Heavy, momentum-based scroll: glides on after release like a thrown ball.
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const lenis = new Lenis({ lerp: 0.055, wheelMultiplier: 0.85, touchMultiplier: 1.4, syncTouch: true, syncTouchLerp: 0.05, touchInertiaExponent: 1.9, anchors: true });
-    let raf = 0;
-    const loop = (t: number) => { lenis.raf(t); raf = requestAnimationFrame(loop); };
-    raf = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(raf); lenis.destroy(); };
-  }, []);
-
   return (
     <main className="landing-page bg-landing-surface text-landing-ink">
       <section className="landing-hero">
@@ -108,11 +91,7 @@ export default function LandingPage() {
         <div id="top" ref={topRef} className="landing-hero-content">
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={topVisible ? { opacity: 1, scale: 1 } : undefined} transition={{ duration: 0.65 }} className="landing-check-logo" aria-label="Nomi logo"><CheckMark /></motion.div>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.1 }}>
-            Meet <span className="landing-inline-avatar">
-              <AnimatePresence mode="wait">
-                <motion.img key={index} src={heroLooks[index % heroLooks.length]} alt="Nomi" initial={{ opacity: 0, scale: 0.7, rotate: -8 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} exit={{ opacity: 0, scale: 0.7, rotate: 8 }} transition={{ duration: 0.35 }} />
-              </AnimatePresence>
-            </span>, your AI
+            Meet <span className="landing-nomi-word">nomi<img src={ivory} alt="Nomi" className="landing-nomi-sitter" /></span>, your AI
           </motion.h1>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.2 }}><RotatingPromise index={index} /></motion.div>
           <motion.div initial={{ opacity: 0 }} animate={topVisible ? { opacity: 1 } : undefined} transition={{ duration: 0.6, delay: 0.6 }} className="flex flex-wrap items-center justify-center gap-3">
@@ -127,7 +106,6 @@ export default function LandingPage() {
       <StorySection title="Nomi opens the browser and gets it done." copy="From picking seats to finishing a booking, Nomi handles the clicks and keeps you posted." image={browserImg.url} alt="Nomi booking movie tickets in a browser" soft />
       <StorySection title="Nomi can prepare the purchase. You make the call." copy="Prices can be checked and checkout can be readied, but nothing important happens until you approve it." image={approvalsImg.url} alt="Nomi asking for approval before an order" />
       <StorySection id="goals" title="Goals that keep moving with you." copy="Nomi keeps sight of what matters and suggests the next move while there is still time." image={goalsImg.url} alt="Goals and ideas lists" soft />
-      <StorySection title="Your logins stay locked away." copy="Credentials live in a secure store. Nomi uses them only when you allow it." image={secureImg.url} alt="Secure credentials store" />
       <StorySection id="connections" title="One Nomi, across the tools you already use." copy="Bring mail, calendar, files, shopping, messages, and more into one calm conversation—with every permission under your control." image={connectorsImg.url} alt="Connected app icons" soft />
 
       <section className="landing-mascot">
