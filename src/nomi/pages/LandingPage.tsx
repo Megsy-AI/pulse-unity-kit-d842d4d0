@@ -8,16 +8,7 @@ import browserImg from "@/assets/landing/gen-browser.webp";
 import approvalImg from "@/assets/landing/gen-approval.webp";
 import goalsImg from "@/assets/landing/gen-goals.webp";
 import connectorsImg from "@/assets/landing/connectors.webp.asset.json";
-import checksImg from "@/assets/landing/nomi-checks.png.asset.json";
 import ivory from "@/assets/nomi-look-ivory.webp";
-
-function CheckMark({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 100 70" className={className} aria-hidden="true" fill="currentColor">
-      <path d="M2 38 L14 30 L30 54 L96 4 L99 7 L32 68 Z" />
-    </svg>
-  );
-}
 
 const navItems = [
   { label: "What Nomi does", href: "#conversation" },
@@ -62,56 +53,91 @@ function StorySection({ id, title, copy, image, alt, soft = false, priority = fa
   );
 }
 
-/**
- * Heavy-ball scroll physics: wheel input feeds a velocity that decays with
- * high friction, and the scroll position eases toward a target. The page
- * feels weighty — a flick keeps gliding a little, then settles slowly.
- * Touch scrolling stays native (mobile already has momentum).
- */
 function useHeavyScroll() {
   useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) return;
     let target = window.scrollY;
-    let velocity = 0;
     let raf = 0;
     let running = false;
+    let touching = false;
+    let lastTouchY = 0;
+    let touchVelocity = 0;
+
+    const limit = (value: number) => {
+      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      return Math.max(0, Math.min(max, value));
+    };
 
     const tick = () => {
-      velocity *= 0.90; // heavy friction
-      target += velocity;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      target = Math.max(0, Math.min(max, target));
       const current = window.scrollY;
-      const next = current + (target - current) * 0.14; // weighty ease
+      const next = current + (target - current) * 0.13;
       window.scrollTo(0, next);
-      if (Math.abs(velocity) > 0.15 || Math.abs(target - next) > 0.5) {
+      if (Math.abs(target - next) > 0.45) {
         raf = requestAnimationFrame(tick);
       } else {
+        window.scrollTo(0, target);
         running = false;
       }
     };
 
+    const start = () => {
+      if (running) return;
+      running = true;
+      raf = requestAnimationFrame(tick);
+    };
+
     const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey) return; // allow pinch-zoom
+      if (e.ctrlKey) return;
       e.preventDefault();
-      velocity += e.deltaY * 0.32;
-      velocity = Math.max(-90, Math.min(90, velocity));
-      if (!running) {
-        running = true;
-        target = window.scrollY;
-        raf = requestAnimationFrame(tick);
-      }
+      if (!running) target = window.scrollY;
+      const delta = Math.max(-120, Math.min(120, e.deltaY));
+      target = limit(target + delta * 0.72);
+      start();
     };
 
     const onScroll = () => {
-      if (!running) target = window.scrollY;
+      if (!running && !touching) target = window.scrollY;
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      touching = true;
+      lastTouchY = touch.clientY;
+      touchVelocity = 0;
+      target = window.scrollY;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch || !touching) return;
+      e.preventDefault();
+      const delta = lastTouchY - touch.clientY;
+      lastTouchY = touch.clientY;
+      touchVelocity = touchVelocity * 0.55 + delta * 0.45;
+      target = limit(target + delta * 0.7);
+      start();
+    };
+
+    const onTouchEnd = () => {
+      if (!touching) return;
+      touching = false;
+      target = limit(target + Math.max(-180, Math.min(180, touchVelocity * 7)));
+      start();
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
       cancelAnimationFrame(raf);
     };
   }, []);
@@ -145,13 +171,6 @@ export default function LandingPage() {
         <AnimatePresence>{menuOpen && <motion.nav initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mobile-menu-glass fixed inset-x-4 top-16 z-50 flex flex-col gap-5 rounded-2xl py-8 md:hidden">{navItems.map((item) => <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className="px-8 text-sm font-light uppercase tracking-[0.2em] text-landing-on-dark-muted">{item.label}</a>)}<Button className="mx-6 mt-2 rounded-full bg-landing-on-dark text-landing-ink hover:bg-landing-on-dark-muted" onClick={() => navigate("/auth")}>Sign in</Button></motion.nav>}</AnimatePresence>
 
         <div id="top" ref={topRef} className="landing-hero-content">
-          <motion.div initial={{ opacity: 0 }} animate={topVisible ? { opacity: 1 } : undefined} transition={{ duration: 0.9, delay: 0.15 }} className="landing-checks-field" aria-hidden="true">
-            <CheckMark className="landing-check-float landing-check-float-1" />
-            <CheckMark className="landing-check-float landing-check-float-2" />
-            <CheckMark className="landing-check-float landing-check-float-3" />
-            <CheckMark className="landing-check-float landing-check-float-4" />
-            <CheckMark className="landing-check-float landing-check-float-5" />
-          </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.1 }}>
             Meet <span className="landing-nomi-word">nomi<img src={ivory} alt="Nomi" className="landing-nomi-sitter" /></span>, your AI
           </motion.h1>
@@ -169,17 +188,6 @@ export default function LandingPage() {
       <StorySection title="Nomi can prepare the purchase. You make the call." copy="Prices can be checked and checkout can be readied, but nothing important happens until you approve it." image={approvalImg} alt="Nomi asking for approval before an order" />
       <StorySection id="goals" title="Goals that keep moving with you." copy="Nomi keeps sight of what matters and suggests the next move while there is still time." image={goalsImg} alt="Nomi climbing goal cards" soft />
       <StorySection id="connections" title="One Nomi, across the tools you already use." copy="Bring mail, calendar, files, shopping, messages, and more into one calm conversation—with every permission under your control." image={connectorsImg.url} alt="Connected app icons" soft />
-
-      <section className="landing-mascot">
-        <Reveal className="landing-mascot-card">
-          <div className="landing-mascot-copy">
-            <CheckMark className="landing-mascot-check" />
-            <h2>Checked. Done. Next.</h2>
-            <p>Nomi ticks things off while you get on with your day.</p>
-          </div>
-          <img src={checksImg.url} alt="Nomi in a blue sweater and sunglasses" loading="lazy" />
-        </Reveal>
-      </section>
 
       <section className="landing-final-cta">
         <Reveal className="text-center">
