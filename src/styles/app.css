@@ -406,6 +406,24 @@
 .nomi-sparkles { fill: var(--accent); }
 .nomi-image-float { transform: translateY(0); }
 
+@keyframes nomi-header-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-3px) rotate(2deg); }
+}
+
+@keyframes nomi-greeting-wave {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  30% { transform: translateY(-5px) rotate(3deg); }
+  60% { transform: translateY(-2px) rotate(-2deg); }
+}
+
+.nomi-header-bob { animation: nomi-header-bob 2.6s ease-in-out infinite; }
+.nomi-wave-greeting { animation: nomi-greeting-wave 2.8s ease-in-out infinite; }
+.nomi-pixel-wordmark {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  text-shadow: 2px 0 0 currentColor;
+}
+
 /* Animated colour edges used by the call screen. */
 .nomi-call-edges::before {
   content: "";
