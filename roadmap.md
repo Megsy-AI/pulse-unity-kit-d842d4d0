@@ -46,7 +46,7 @@
 - [x] Remove the hero video entirely and use a clean white opening.
 - [x] Always open the welcome page at `/` and optimize its initial loading path and avatar assets.
 - [x] Rebuild the welcome story with the Nomi check logo, rotating promises, character-led sign-in opening, and original conversation, action, approval, goals, and integrations artwork.
-- [ ] Import the verified reference styling for Settings, sidebar, subscriptions, and the chat composer without importing its product logic or data layer.
-- [ ] Make the menu trigger fully transparent and borderless; replace Get premium with Premium and the supplied animated purple star.
-- [ ] Simplify empty chat to one personalized intelligent line, remove suggestion chips, repair the selected character presentation, and compact the idle composer.
-- [ ] Add the Nomi subscription screen based on the verified reference design and connect the Premium action to it.
+- [x] Import the verified reference styling for Settings, sidebar, subscriptions, and the chat composer without importing its product logic or data layer.
+- [x] Make the menu trigger fully transparent and borderless; replace Get premium with Premium and the supplied animated purple star.
+- [x] Simplify empty chat to one personalized intelligent line, remove suggestion chips, repair the selected character presentation, and compact the idle composer.
+- [x] Add the Nomi subscription screen based on the verified reference design and connect the Premium action to it.
