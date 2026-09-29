@@ -22,15 +22,15 @@
 - Push notifications for reminders.
 
 ## Current request
-- [ ] Show accessory-only circular thumbnails, complete every glasses/outfit combination, and route straight to chat after selection.
-- [ ] Generate ten distinct cute glasses and ten distinct cute outfits while preserving Nomi's exact identity.
-- [ ] Redesign chat, settings, and the on-demand sidebar with a clean rounded shadcn interface.
-- [ ] Standardize application actions to black-on-white or white-on-black button treatments.
-- [ ] Make the chat header borderless with an animated selected Nomi, Get premium, and a distinctive menu control.
-- [ ] Put the call action inside the empty chat composer, switching it to send as soon as text is entered.
-- [ ] Hide calls and memory from sidebar navigation; use a text-only Minecraft-style NOMI wordmark.
-- [ ] Let Nomi create projects and tasks; redesign both pages with clean rounded shadcn patterns.
-- [ ] Limit Settings to language and integrations, then add separate Accounts and Memory pages.
+- [x] Show accessory-only circular thumbnails, complete every glasses/outfit combination, and route straight to chat after selection.
+- [x] Generate ten distinct cute glasses and ten distinct cute outfits while preserving Nomi's exact identity.
+- [x] Redesign chat, settings, and the on-demand sidebar with a clean rounded shadcn interface.
+- [x] Standardize application actions to black-on-white or white-on-black button treatments.
+- [x] Make the chat header borderless with an animated selected Nomi, Get premium, and a distinctive menu control.
+- [x] Put the call action inside the empty chat composer, switching it to send as soon as text is entered.
+- [x] Hide calls and memory from sidebar navigation; use a text-only Minecraft-style NOMI wordmark.
+- [x] Let Nomi create projects and tasks; redesign both pages with clean rounded shadcn patterns.
+- [x] Limit Settings to language and integrations, then add separate Accounts and Memory pages.
 - [x] Prevent option artwork from overlapping or escaping its tile, and verify every live character layer.
 - [x] Redesign authentication transitions and rebuild character creation with ten choices per category.
 - [x] Restyle sign-in with an uppercase Nomi character logo, transparent black Megsy logo, and two aligned auth buttons.

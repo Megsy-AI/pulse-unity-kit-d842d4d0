@@ -30,9 +30,9 @@ export default function MemoryPage() {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder={ar ? "مثلاً: بحب القهوة سادة" : "e.g. I drink my coffee black"}
-            className="h-11 rounded-md"
+            className="h-11 rounded-full px-4"
           />
-          <Button type="submit" className="h-11 rounded-md px-5">
+          <Button type="submit" className="h-11 px-5">
             <Plus className="size-4" />
             {t("add")}
           </Button>
@@ -48,7 +48,7 @@ export default function MemoryPage() {
             {memories.map((memory) => (
               <div
                 key={memory.id}
-                className="group flex items-center gap-3 rounded-md border border-border bg-card px-4 py-3 shadow-sm"
+                className="group flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm"
               >
                 <Switch
                   checked={memory.enabled}
