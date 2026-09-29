@@ -17,6 +17,7 @@ const AbilitiesPage = lazy(() => import("@/nomi/pages/AbilitiesPage"));
 const PrivacyPage = lazy(() => import("@/nomi/pages/PrivacyPage"));
 const ProjectsPage = lazy(() => import("@/nomi/pages/ProjectsPage"));
 const SettingsPage = lazy(() => import("@/nomi/pages/SettingsPage"));
+const AccountsPage = lazy(() => import("@/nomi/pages/AccountsPage"));
 
 function Guarded({ children }: { children: React.ReactNode }) {
   const { ready, companion } = useNomi();
@@ -96,6 +97,10 @@ function AppRoutes() {
               <ProjectsPage />
             </Guarded>
           }
+        />
+        <Route
+          path="/accounts"
+          element={<Guarded><AccountsPage /></Guarded>}
         />
         <Route
           path="/settings"
