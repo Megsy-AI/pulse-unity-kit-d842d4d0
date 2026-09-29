@@ -1,24 +1,25 @@
-import { useMemo, useState } from "react";
-import { Check, Glasses, Palette, Shirt, Sparkles, UserRound, WandSparkles } from "lucide-react";
+import { useState } from "react";
+import { Check, CircleSlash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { NomiAvatar } from "../avatar/NomiAvatar";
 import { useNomi } from "../store";
 import type { NomiCompanion } from "../types";
 
-const assets = import.meta.glob("../../assets/character/**/*.png", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const assets = import.meta.glob("../../assets/character/{glasses,outfits,hair,faces,accessories}/*.png", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
 type Category = "glasses" | "outfits" | "hair" | "faces" | "colors" | "accessories";
-const CATEGORIES: Array<{ id: Category; en: string; ar: string; icon: typeof Glasses }> = [
-  { id: "glasses", en: "Glasses", ar: "النظارات", icon: Glasses }, { id: "outfits", en: "Outfits", ar: "الملابس", icon: Shirt },
-  { id: "hair", en: "Hair", ar: "الشعر", icon: Sparkles }, { id: "faces", en: "Face", ar: "الوجه", icon: UserRound },
-  { id: "colors", en: "Colors", ar: "الألوان", icon: Palette }, { id: "accessories", en: "Extras", ar: "الإضافات", icon: WandSparkles },
+const CATEGORIES: Array<{ id: Category; en: string; ar: string }> = [
+  { id: "glasses", en: "Glasses", ar: "نظارات" }, { id: "outfits", en: "Clothes", ar: "ملابس" },
+  { id: "hair", en: "Hair", ar: "شعر" }, { id: "faces", en: "Face", ar: "وجه" },
+  { id: "colors", en: "Color", ar: "لون" }, { id: "accessories", en: "Extras", ar: "إضافات" },
 ];
 const LABELS: Record<Exclude<Category, "colors">, string[]> = {
-  glasses: ["Black oval", "Clear square", "Cobalt round", "Pink heart", "Silver slim", "Amber sun", "Ocean blue", "Sage round", "Cat eye", "Sport wrap"],
-  outfits: ["Varsity", "Navy hoodie", "Peach overall", "Red knit", "Sunday shirt", "Mint cardigan", "Rain coat", "Black set", "Lavender", "Blue blazer"],
-  hair: ["Soft tuft", "Side sweep", "Tiny buns", "Short curls", "Cloud curls", "Neat quiff", "Soft fringe", "Braided crown", "Pony tuft", "Natural"],
+  glasses: ["Oval", "Clear", "Round", "Heart", "Slim", "Amber", "Ocean", "Sage", "Cat eye", "Sport"],
+  outfits: ["Varsity", "Hoodie", "Overall", "Knit", "Sunday", "Cardigan", "Raincoat", "Black", "Lilac", "Blazer"],
+  hair: ["Tuft", "Sweep", "Buns", "Curls", "Cloud", "Quiff", "Fringe", "Braids", "Pony", "Natural"],
   faces: ["Bright", "Gentle", "Freckles", "Lashes", "Rosy", "Shy", "Calm", "Bold", "Happy", "Curious"],
-  accessories: ["Nomi cap", "Cream beanie", "Headphones", "Bow", "Silk scarf", "Star pin", "Crown", "Flower", "Necktie", "Backpack"],
+  accessories: ["Cap", "Beanie", "Headphones", "Bow", "Scarf", "Star", "Crown", "Flower", "Tie", "Backpack"],
 };
 const COLORS = [
   ["Ivory", "#F4E8D5", "#D52D27"], ["Lavender", "#B7A9F4", "#2856D8"], ["Mint", "#BCE9CF", "#142C55"], ["Peach", "#FFA987", "#F38CAD"], ["Sky", "#B9DDF5", "#2563EB"],
@@ -29,26 +30,44 @@ const getAsset = (category: Exclude<Category, "colors">, index: number) => Objec
 export function CharacterCustomizer({ onDone }: { onDone?: () => void }) {
   const { companion, updateCompanion, language } = useNomi();
   const [category, setCategory] = useState<Category>("glasses");
-  const [previewKey, setPreviewKey] = useState(0);
   const ar = language === "ar";
-  const selections = useMemo(() => ({ glasses: companion.glasses, outfits: companion.outfit, hair: companion.hair ?? "hair-01", faces: companion.face ?? "faces-01", accessories: companion.accessory ?? "accessories-01" }), [companion]);
-  const choose = (patch: Partial<NomiCompanion>) => { updateCompanion(patch); setPreviewKey((value) => value + 1); };
-  const selectedId = category === "colors" ? "" : selections[category];
-  const previewIndex = Math.max(0, Number(selectedId.split("-").at(-1)) - 1);
-  const previewAsset = category === "colors" ? null : getAsset(category, previewIndex);
+  const selected = category === "glasses" ? companion.glasses : category === "outfits" ? companion.outfit : category === "hair" ? companion.hair : category === "faces" ? companion.face : category === "accessories" ? companion.accessory : companion.baseColor;
+  const chooseItem = (id: string) => {
+    if (category === "glasses") updateCompanion({ glasses: id as NomiCompanion["glasses"] });
+    if (category === "outfits") updateCompanion({ outfit: id as NomiCompanion["outfit"] });
+    if (category === "hair") updateCompanion({ hair: id as NomiCompanion["hair"] });
+    if (category === "faces") updateCompanion({ face: id as NomiCompanion["face"] });
+    if (category === "accessories") updateCompanion({ accessory: id as NomiCompanion["accessory"] });
+  };
 
   return (
-    <section className="min-h-dvh overflow-hidden bg-background" dir={ar ? "rtl" : "ltr"}>
-      <div className="relative flex min-h-[325px] items-center justify-center overflow-hidden bg-primary-soft px-5 pt-6 md:min-h-[400px]">
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-card/40 to-transparent" />
-        <div key={previewKey} className="relative animate-character-pop"><NomiAvatar companion={companion} pose="idle" size={320} floating={false} />{previewAsset ? <img src={previewAsset} alt="" className="pointer-events-none absolute -end-5 top-3 size-20 object-contain drop-shadow-sm" /> : null}</div>
-        <div className="absolute bottom-4 start-5 rounded-full bg-card/90 px-3 py-1.5 text-xs font-semibold shadow-sm backdrop-blur">{companion.name}</div>
-      </div>
-      <div className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur"><div className="scrollbar-none flex overflow-x-auto px-3">{CATEGORIES.map(({ id, en, ar: labelAr, icon: Icon }) => <Button key={id} type="button" variant="ghost" onClick={() => setCategory(id)} className={cn("relative h-14 shrink-0 rounded-none px-4 text-xs text-muted-foreground", category === id && "text-foreground after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:bg-foreground")}><Icon className="size-4" />{ar ? labelAr : en}</Button>)}</div></div>
-      <div className="mx-auto max-w-3xl p-4 pb-8 md:p-6">
-        <div className="mb-4 flex items-end justify-between"><div><p className="text-lg font-semibold">{ar ? CATEGORIES.find((item) => item.id === category)?.ar : CATEGORIES.find((item) => item.id === category)?.en}</p><p className="mt-0.5 text-xs text-muted-foreground">{ar ? "اختر من 10 تصميمات" : "Choose from 10 designs"}</p></div><span className="text-xs font-medium text-muted-foreground">10</span></div>
-        {category === "colors" ? <div className="grid grid-cols-5 gap-3">{COLORS.map(([name, base, accent]) => { const selected = companion.baseColor === base; return <Button key={name} type="button" variant="ghost" aria-label={name} onClick={() => choose({ baseColor: base, accentColor: accent })} className={cn("relative aspect-square h-auto rounded-full border-2 p-1.5", selected ? "border-foreground" : "border-transparent")}><span className="size-full rounded-full" style={{ backgroundColor: base }} />{selected ? <Check className="absolute size-4 text-foreground" /> : null}</Button>; })}</div> : <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">{LABELS[category].map((label, index) => { const id = `${category}-${String(index + 1).padStart(2, "0")}`; const legacySelected = (category === "glasses" && index === 0 && companion.glasses === "black-oval") || (category === "outfits" && index === 3 && companion.outfit === "knit"); const selected = selectedId === id || legacySelected; const patch = category === "glasses" ? { glasses: id } : category === "outfits" ? { outfit: id } : category === "hair" ? { hair: id } : category === "faces" ? { face: id } : { accessory: id }; return <Button key={id} type="button" variant="ghost" onClick={() => choose(patch as Partial<NomiCompanion>)} className={cn("relative h-auto min-h-32 flex-col overflow-hidden rounded-lg border bg-secondary/55 p-2 transition-all duration-200", selected ? "border-foreground bg-card shadow-sm" : "border-transparent hover:bg-secondary")}><img src={getAsset(category, index)} alt="" className="aspect-square w-full object-contain" /><span className="w-full truncate px-1 text-xs font-medium">{label}</span>{selected ? <span className="absolute end-2 top-2 grid size-5 place-items-center rounded-full bg-foreground text-background"><Check className="size-3" /></span> : null}</Button>; })}</div>}
-        {onDone ? <div className="sticky bottom-0 mt-6 bg-background/95 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur"><Button type="button" onClick={onDone} className="h-14 w-full rounded-full text-base">{ar ? "التالي" : "Next"}</Button></div> : null}
+    <section className={cn("flex overflow-hidden bg-background", onDone ? "h-dvh" : "h-[calc(100dvh-4rem)]")} dir={ar ? "rtl" : "ltr"}>
+      <div className="mx-auto flex h-full w-full max-w-4xl flex-col">
+        <div className="relative grid h-[42%] min-h-64 shrink-0 place-items-center overflow-hidden border-b border-border bg-primary-soft/60">
+          <div className="absolute inset-x-8 bottom-3 h-px bg-border/60" />
+          <NomiAvatar companion={companion} pose="idle" size={300} floating={false} className="animate-character-pop" />
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col bg-background">
+          <Tabs value={category} onValueChange={(value) => setCategory(value as Category)} className="shrink-0 border-b border-border bg-background">
+            <TabsList className="scrollbar-none flex h-14 w-full justify-start gap-0 overflow-x-auto rounded-none border-0 bg-transparent p-2 shadow-none">
+              {CATEGORIES.map((item) => <TabsTrigger key={item.id} value={item.id} className="h-10 shrink-0 rounded-md px-4 text-sm shadow-none data-[state=active]:bg-secondary data-[state=active]:shadow-none">{ar ? item.ar : item.en}</TabsTrigger>)}
+            </TabsList>
+          </Tabs>
+
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 md:px-7">
+            <div className="mb-4 flex items-center justify-between"><h2 className="text-base font-semibold">{ar ? CATEGORIES.find((item) => item.id === category)?.ar : CATEGORIES.find((item) => item.id === category)?.en}</h2><span className="text-xs text-muted-foreground">{ar ? "10 اختيارات" : "10 choices"}</span></div>
+            {category === "colors" ? (
+              <div className="grid grid-cols-5 gap-3">{COLORS.map(([name, base, accent]) => <Button key={name} type="button" variant="outline" aria-label={name} onClick={() => updateCompanion({ baseColor: base, accentColor: accent })} className={cn("relative aspect-square h-auto rounded-full p-1.5", selected === base ? "border-foreground ring-2 ring-ring ring-offset-2" : "border-border")}><span className="size-full rounded-full" style={{ backgroundColor: base }} />{selected === base ? <Check className="absolute size-4 text-foreground" /> : null}</Button>)}</div>
+            ) : (
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+                <Button type="button" variant="outline" onClick={() => chooseItem("none")} className={cn("relative aspect-square h-auto flex-col rounded-md p-2", selected === "none" || !selected ? "border-primary bg-primary-soft text-primary" : "border-border bg-card")}><CircleSlash2 className="size-7" /><span className="text-xs">{ar ? "بدون" : "None"}</span>{selected === "none" || !selected ? <Check className="absolute end-2 top-2 size-4" /> : null}</Button>
+                {LABELS[category].map((label, index) => { const id = `${category}-${String(index + 1).padStart(2, "0")}`; const active = selected === id; return <Button key={id} type="button" variant="outline" onClick={() => chooseItem(id)} className={cn("relative aspect-square h-auto flex-col overflow-hidden rounded-md p-1.5", active ? "border-primary bg-primary-soft" : "border-border bg-card")}><img src={getAsset(category, index)} alt="" className="min-h-0 w-full flex-1 object-contain" /><span className="w-full truncate text-[11px] font-medium">{label}</span>{active ? <span className="absolute end-2 top-2 grid size-5 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="size-3" /></span> : null}</Button>; })}
+              </div>
+            )}
+          </div>
+          {onDone ? <div className="shrink-0 border-t border-border bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))]"><Button type="button" onClick={onDone} className="h-12 w-full rounded-md text-base">{ar ? "التالي" : "Next"}</Button></div> : null}
+        </div>
       </div>
     </section>
   );
