@@ -172,7 +172,7 @@
   --animate-nomi-pulse-ring: nomi-pulse-ring 2.6s ease-out infinite;
 }
 
-.landing-page { font-family: "Geist", var(--font-sans); overflow-x: clip; }
+.landing-page { font-family: "Geist", var(--font-sans); overflow-x: clip; touch-action: pan-y; }
 .font-garamond { font-family: "Garamond", "Times New Roman", serif; }
 .mobile-menu-glass { background: color-mix(in oklab, var(--landing-ink) 70%, transparent); backdrop-filter: blur(20px); border: 1px solid var(--landing-glass-line); box-shadow: 0 8px 32px color-mix(in oklab, var(--landing-ink) 40%, transparent), inset 0 1px 0 color-mix(in oklab, var(--landing-on-dark) 10%, transparent); }
 .landing-story-section { display: flex; min-height: 100dvh; width: 100%; flex-direction: column; align-items: center; justify-content: center; padding: 7rem 1.25rem; }
@@ -206,13 +206,13 @@
 .hero-promise > span { width: 100%; }
 .landing-hero-subtitle { max-width: 34rem; margin-top: 1.1rem; color: var(--landing-muted); font-size: clamp(.95rem, 2vw, 1.15rem); line-height: 1.6; }
 .landing-scroll-cue { position: absolute; bottom: 1.4rem; display: flex; flex-direction: column; align-items: center; gap: .35rem; color: var(--landing-muted); font-size: .65rem; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; }
-.landing-product-section { display: flex; min-height: 100dvh; width: 100%; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 6rem 1.25rem 2rem; background: var(--landing-surface); }
+.landing-product-section { display: flex; min-height: 100dvh; width: 100%; flex-direction: column; align-items: center; justify-content: center; overflow-x: clip; padding: 6rem 1.25rem 2rem; background: var(--landing-surface); }
 .landing-product-section-soft { background: var(--landing-soft); }
 .landing-product-copy { position: relative; z-index: 2; width: 100%; max-width: 52rem; text-align: center; }
 .landing-product-copy h2 { margin-inline: auto; max-width: 17ch; font-size: clamp(2.25rem, 6vw, 4.8rem); font-weight: 500; line-height: 1.04; }
 .landing-product-copy p { max-width: 40rem; margin: 1.35rem auto 0; color: var(--landing-muted); font-size: clamp(.98rem, 2vw, 1.2rem); line-height: 1.65; }
-.landing-art-stage { display: grid; width: min(100%, 48rem); height: min(80vw, 43rem); margin-top: 1rem; place-items: center; }
-.landing-art-stage img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.landing-art-stage { display: grid; width: min(100%, 48rem); aspect-ratio: 1; margin-top: 1rem; place-items: center; }
+.landing-art-stage img { display: block; width: 100%; height: auto; max-height: 100%; object-fit: contain; }
 .landing-final-cta { display: grid; min-height: 78dvh; place-items: center; padding: 6rem 1.25rem; background: var(--landing-blue); color: var(--landing-on-dark); }
 .landing-final-cta h2 { margin-top: .5rem; font-size: clamp(2.5rem, 7vw, 5.5rem); font-weight: 500; line-height: 1.04; }
 .landing-final-cta p { max-width: 30rem; margin: 1.25rem auto 0; color: var(--landing-on-dark-muted); font-size: 1.05rem; }
