@@ -200,12 +200,10 @@
 .landing-check-logo { display: grid; width: 4.25rem; height: 4.25rem; margin-bottom: 1.5rem; place-items: center; color: var(--landing-ink); }
 .landing-check-logo svg { width: 3rem; height: auto; }
 .landing-hero h1 { max-width: 16ch; font-family: "Geist", var(--font-sans); font-size: clamp(2.6rem, 8vw, 6.7rem); font-weight: 500; line-height: 1.02; }
-.landing-inline-avatar { display: inline-flex; width: 1.35em; height: 1.35em; vertical-align: -.32em; align-items: center; justify-content: center; }
-.landing-inline-avatar img { width: 100%; height: 100%; object-fit: contain; }
+.landing-nomi-word { position: relative; display: inline-block; }
+.landing-nomi-sitter { position: absolute; left: 50%; bottom: 78%; width: 1.7em; height: auto; transform: translateX(-50%); pointer-events: none; }
 .landing-mascot { display: grid; place-items: center; padding: 4rem 1.25rem; background: var(--landing-surface); }
 .landing-mascot img { width: min(100%, 56rem); border-radius: 2rem; }
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
 .hero-promise { display: grid; width: min(92vw, 54rem); min-height: 1.5em; margin: 1rem auto 2.25rem; place-items: center; overflow: hidden; color: var(--landing-ink); font-size: clamp(1rem, 2.4vw, 1.5rem); font-weight: 400; line-height: 1.3; white-space: nowrap; }
 .hero-promise > span { width: 100%; }
 .landing-hero-subtitle { max-width: 34rem; margin-top: 1.1rem; color: var(--landing-muted); font-size: clamp(.95rem, 2vw, 1.15rem); line-height: 1.6; }
