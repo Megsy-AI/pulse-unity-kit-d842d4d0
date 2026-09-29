@@ -1,15 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { ArrowDown, Check, Menu, X } from "lucide-react";
+import { ArrowDown, Menu, X } from "lucide-react";
+import Lenis from "lenis";
 import { Button } from "@/components/ui/button";
-import conversationImage from "@/assets/nomi-scene-booking.webp";
-import actionImage from "@/assets/nomi-scene-action.webp";
-import approvalImage from "@/assets/nomi-landing-approval.webp";
-import goalsImage from "@/assets/nomi-scene-goals-peach.webp";
-import integrationsImage from "@/assets/nomi-landing-integrations.webp";
-import { NomiAvatar } from "../avatar/NomiAvatar";
-import { useNomi } from "../store";
+import messagingImg from "@/assets/landing/messaging.webp.asset.json";
+import browserImg from "@/assets/landing/browser.webp.asset.json";
+import approvalsImg from "@/assets/landing/approvals.webp.asset.json";
+import goalsImg from "@/assets/landing/goals.webp.asset.json";
+import secureImg from "@/assets/landing/secure-storage.webp.asset.json";
+import connectorsImg from "@/assets/landing/connectors.webp.asset.json";
+import checksImg from "@/assets/landing/nomi-checks.png.asset.json";
+import lavender from "@/assets/nomi-look-lavender.webp";
+import mint from "@/assets/nomi-look-mint.webp";
+import peach from "@/assets/nomi-look-peach.webp";
+import ivory from "@/assets/nomi-look-ivory.webp";
+
+const heroLooks = [ivory, peach, mint, lavender];
+
+function CheckMark({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 100 70" className={className} aria-hidden="true" fill="currentColor">
+      <path d="M2 38 L14 30 L30 54 L96 4 L99 7 L32 68 Z" />
+    </svg>
+  );
+}
 
 const navItems = [
   { label: "What Nomi does", href: "#conversation" },
@@ -28,13 +43,7 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
   return <motion.div initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className={className}>{children}</motion.div>;
 }
 
-function RotatingPromise() {
-  const [index, setIndex] = useState(0);
-  useEffect(() => {
-    const timer = window.setInterval(() => setIndex((current) => (current + 1) % changingPromises.length), 2600);
-    return () => window.clearInterval(timer);
-  }, []);
-
+function RotatingPromise({ index }: { index: number }) {
   return (
     <span className="hero-promise" aria-live="polite">
       <AnimatePresence mode="wait">
@@ -61,11 +70,26 @@ function StorySection({ id, title, copy, image, alt, soft = false, priority = fa
 }
 
 export default function LandingPage() {
-  const { companion } = useNomi();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [index, setIndex] = useState(0);
   const topRef = useRef<HTMLDivElement>(null);
   const topVisible = useInView(topRef, { once: true });
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setIndex((c) => (c + 1) % changingPromises.length), 2600);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  // Heavy, momentum-based scroll: glides on after release like a thrown ball.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const lenis = new Lenis({ lerp: 0.055, wheelMultiplier: 0.85, touchMultiplier: 1.4, syncTouch: true, syncTouchLerp: 0.05, touchInertiaExponent: 1.9, anchors: true });
+    let raf = 0;
+    const loop = (t: number) => { lenis.raf(t); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); lenis.destroy(); };
+  }, []);
 
   return (
     <main className="landing-page bg-landing-surface text-landing-ink">
@@ -82,11 +106,15 @@ export default function LandingPage() {
         <AnimatePresence>{menuOpen && <motion.nav initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mobile-menu-glass fixed inset-x-4 top-16 z-50 flex flex-col gap-5 rounded-2xl py-8 md:hidden">{navItems.map((item) => <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className="px-8 text-sm font-light uppercase tracking-[0.2em] text-landing-on-dark-muted">{item.label}</a>)}<Button className="mx-6 mt-2 rounded-full bg-landing-on-dark text-landing-ink hover:bg-landing-on-dark-muted" onClick={() => navigate("/auth")}>Sign in</Button></motion.nav>}</AnimatePresence>
 
         <div id="top" ref={topRef} className="landing-hero-content">
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={topVisible ? { opacity: 1, scale: 1 } : undefined} transition={{ duration: 0.65 }} className="landing-check-logo" aria-label="Nomi logo"><Check strokeWidth={3.4} /></motion.div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={topVisible ? { opacity: 1, scale: 1 } : undefined} transition={{ duration: 0.65 }} className="landing-check-logo" aria-label="Nomi logo"><CheckMark /></motion.div>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.1 }}>
-            Meet <span className="landing-inline-avatar"><NomiAvatar companion={companion} pose="wave" size={82} floating={false} /></span>, your AI
+            Meet <span className="landing-inline-avatar">
+              <AnimatePresence mode="wait">
+                <motion.img key={index} src={heroLooks[index % heroLooks.length]} alt="Nomi" initial={{ opacity: 0, scale: 0.7, rotate: -8 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} exit={{ opacity: 0, scale: 0.7, rotate: 8 }} transition={{ duration: 0.35 }} />
+              </AnimatePresence>
+            </span>, your AI
           </motion.h1>
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.2 }}><RotatingPromise /></motion.div>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.2 }}><RotatingPromise index={index} /></motion.div>
           <motion.div initial={{ opacity: 0 }} animate={topVisible ? { opacity: 1 } : undefined} transition={{ duration: 0.6, delay: 0.6 }} className="flex flex-wrap items-center justify-center gap-3">
             <Button size="lg" className="h-12 rounded-full bg-landing-ink px-8 text-landing-on-dark hover:bg-landing-ink" onClick={() => navigate("/auth")}>Create your Nomi</Button>
             <Button size="lg" variant="outline" className="h-12 rounded-full border-landing-ink bg-landing-surface px-8 text-landing-ink hover:bg-landing-ink hover:text-landing-on-dark" onClick={() => navigate("/auth")}>Sign in</Button>
@@ -95,11 +123,16 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <StorySection id="conversation" title="Say what you need. Nomi works out the rest." copy="Ask naturally, add a detail when Nomi needs it, and watch the plan turn into a real next step." image={conversationImage} alt="Nomi arranging a restaurant reservation in a conversation" priority />
-      <StorySection title="Your inbox, calendar, and plans finally move together." copy="Nomi can find the right message, prepare the appointment, and bring the final choice back to you." image={actionImage} alt="Nomi preparing a calendar event from an email" soft />
-      <StorySection title="Nomi can prepare the purchase. You make the call." copy="Prices can be checked and checkout can be readied, but nothing important happens until you approve it." image={approvalImage} alt="Nomi showing a purchase approval before checkout" />
-      <StorySection id="goals" title="Goals that keep moving with you." copy="Nomi keeps sight of what matters, notices useful moments, and suggests the next move while there is still time." image={goalsImage} alt="A peach Nomi organizing goals and next moves" soft />
-      <StorySection id="connections" title="One Nomi, across the tools you already use." copy="Bring mail, calendar, files, shopping, messages, and more into one calm conversation—with every permission under your control." image={integrationsImage} alt="Nomi surrounded by connected service icons" />
+      <StorySection id="conversation" title="Say what you need. Nomi works out the rest." copy="Ask naturally, add a detail when Nomi needs it, and watch it turn into a real next step." image={messagingImg.url} alt="Nomi filling out a form from your email" priority />
+      <StorySection title="Nomi opens the browser and gets it done." copy="From picking seats to finishing a booking, Nomi handles the clicks and keeps you posted." image={browserImg.url} alt="Nomi booking movie tickets in a browser" soft />
+      <StorySection title="Nomi can prepare the purchase. You make the call." copy="Prices can be checked and checkout can be readied, but nothing important happens until you approve it." image={approvalsImg.url} alt="Nomi asking for approval before an order" />
+      <StorySection id="goals" title="Goals that keep moving with you." copy="Nomi keeps sight of what matters and suggests the next move while there is still time." image={goalsImg.url} alt="Goals and ideas lists" soft />
+      <StorySection title="Your logins stay locked away." copy="Credentials live in a secure store. Nomi uses them only when you allow it." image={secureImg.url} alt="Secure credentials store" />
+      <StorySection id="connections" title="One Nomi, across the tools you already use." copy="Bring mail, calendar, files, shopping, messages, and more into one calm conversation—with every permission under your control." image={connectorsImg.url} alt="Connected app icons" soft />
+
+      <section className="landing-mascot">
+        <Reveal><img src={checksImg.url} alt="Nomi in a blue sweater and sunglasses" loading="lazy" /></Reveal>
+      </section>
 
       <section className="landing-final-cta">
         <Reveal className="text-center">
