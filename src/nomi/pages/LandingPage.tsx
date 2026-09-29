@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDown, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import messagingImg from "@/assets/landing/messaging.webp.asset.json";
-import browserImg from "@/assets/landing/browser.webp.asset.json";
-import approvalsImg from "@/assets/landing/approvals.webp.asset.json";
-import goalsImg from "@/assets/landing/goals.webp.asset.json";
+import conversationImg from "@/assets/landing/gen-conversation.webp";
+import browserImg from "@/assets/landing/gen-browser.webp";
+import approvalImg from "@/assets/landing/gen-approval.webp";
+import goalsImg from "@/assets/landing/gen-goals.webp";
 import connectorsImg from "@/assets/landing/connectors.webp.asset.json";
 import checksImg from "@/assets/landing/nomi-checks.png.asset.json";
 import ivory from "@/assets/nomi-look-ivory.webp";
@@ -56,10 +56,65 @@ function StorySection({ id, title, copy, image, alt, soft = false, priority = fa
         <p>{copy}</p>
       </Reveal>
       <Reveal className="landing-art-stage">
-        <img src={image} alt={alt} width={960} height={960} loading={priority ? "eager" : "lazy"} decoding="async" />
+        <img src={image} alt={alt} width={1024} height={1024} loading={priority ? "eager" : "lazy"} decoding="async" />
       </Reveal>
     </section>
   );
+}
+
+/**
+ * Heavy-ball scroll physics: wheel input feeds a velocity that decays with
+ * high friction, and the scroll position eases toward a target. The page
+ * feels weighty — a flick keeps gliding a little, then settles slowly.
+ * Touch scrolling stays native (mobile already has momentum).
+ */
+function useHeavyScroll() {
+  useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    let target = window.scrollY;
+    let velocity = 0;
+    let raf = 0;
+    let running = false;
+
+    const tick = () => {
+      velocity *= 0.90; // heavy friction
+      target += velocity;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      target = Math.max(0, Math.min(max, target));
+      const current = window.scrollY;
+      const next = current + (target - current) * 0.14; // weighty ease
+      window.scrollTo(0, next);
+      if (Math.abs(velocity) > 0.15 || Math.abs(target - next) > 0.5) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        running = false;
+      }
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) return; // allow pinch-zoom
+      e.preventDefault();
+      velocity += e.deltaY * 0.32;
+      velocity = Math.max(-90, Math.min(90, velocity));
+      if (!running) {
+        running = true;
+        target = window.scrollY;
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    const onScroll = () => {
+      if (!running) target = window.scrollY;
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
 }
 
 export default function LandingPage() {
@@ -68,6 +123,7 @@ export default function LandingPage() {
   const [index, setIndex] = useState(0);
   const topRef = useRef<HTMLDivElement>(null);
   const topVisible = useInView(topRef, { once: true });
+  useHeavyScroll();
 
   useEffect(() => {
     const timer = window.setInterval(() => setIndex((c) => (c + 1) % changingPromises.length), 2600);
@@ -89,27 +145,40 @@ export default function LandingPage() {
         <AnimatePresence>{menuOpen && <motion.nav initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mobile-menu-glass fixed inset-x-4 top-16 z-50 flex flex-col gap-5 rounded-2xl py-8 md:hidden">{navItems.map((item) => <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className="px-8 text-sm font-light uppercase tracking-[0.2em] text-landing-on-dark-muted">{item.label}</a>)}<Button className="mx-6 mt-2 rounded-full bg-landing-on-dark text-landing-ink hover:bg-landing-on-dark-muted" onClick={() => navigate("/auth")}>Sign in</Button></motion.nav>}</AnimatePresence>
 
         <div id="top" ref={topRef} className="landing-hero-content">
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={topVisible ? { opacity: 1, scale: 1 } : undefined} transition={{ duration: 0.65 }} className="landing-check-logo" aria-label="Nomi logo"><CheckMark /></motion.div>
+          <motion.div initial={{ opacity: 0 }} animate={topVisible ? { opacity: 1 } : undefined} transition={{ duration: 0.9, delay: 0.15 }} className="landing-checks-field" aria-hidden="true">
+            <CheckMark className="landing-check-float landing-check-float-1" />
+            <CheckMark className="landing-check-float landing-check-float-2" />
+            <CheckMark className="landing-check-float landing-check-float-3" />
+            <CheckMark className="landing-check-float landing-check-float-4" />
+            <CheckMark className="landing-check-float landing-check-float-5" />
+          </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.1 }}>
             Meet <span className="landing-nomi-word">nomi<img src={ivory} alt="Nomi" className="landing-nomi-sitter" /></span>, your AI
           </motion.h1>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.2 }}><RotatingPromise index={index} /></motion.div>
           <motion.div initial={{ opacity: 0 }} animate={topVisible ? { opacity: 1 } : undefined} transition={{ duration: 0.6, delay: 0.6 }} className="flex flex-wrap items-center justify-center gap-3">
-            <Button size="lg" className="h-12 rounded-full bg-landing-ink px-8 text-landing-on-dark hover:bg-landing-ink" onClick={() => navigate("/auth")}>Create your Nomi</Button>
-            <Button size="lg" variant="outline" className="h-12 rounded-full border-landing-ink bg-landing-surface px-8 text-landing-ink hover:bg-landing-ink hover:text-landing-on-dark" onClick={() => navigate("/auth")}>Sign in</Button>
+            <Button size="lg" className="landing-hero-cta h-14 rounded-full px-10 text-base" onClick={() => navigate("/auth")}>Create your Nomi</Button>
+            <Button size="lg" variant="outline" className="h-14 rounded-full border-landing-ink bg-landing-surface px-8 text-landing-ink hover:bg-landing-ink hover:text-landing-on-dark" onClick={() => navigate("/auth")}>Sign in</Button>
           </motion.div>
           <a href="#conversation" aria-label="See what Nomi can do" className="landing-scroll-cue"><span>See what Nomi can do</span><ArrowDown className="size-4" /></a>
         </div>
       </section>
 
-      <StorySection id="conversation" title="Say what you need. Nomi works out the rest." copy="Ask naturally, add a detail when Nomi needs it, and watch it turn into a real next step." image={messagingImg.url} alt="Nomi filling out a form from your email" priority />
-      <StorySection title="Nomi opens the browser and gets it done." copy="From picking seats to finishing a booking, Nomi handles the clicks and keeps you posted." image={browserImg.url} alt="Nomi booking movie tickets in a browser" soft />
-      <StorySection title="Nomi can prepare the purchase. You make the call." copy="Prices can be checked and checkout can be readied, but nothing important happens until you approve it." image={approvalsImg.url} alt="Nomi asking for approval before an order" />
-      <StorySection id="goals" title="Goals that keep moving with you." copy="Nomi keeps sight of what matters and suggests the next move while there is still time." image={goalsImg.url} alt="Goals and ideas lists" soft />
+      <StorySection id="conversation" title="Say what you need. Nomi works out the rest." copy="Ask naturally, add a detail when Nomi needs it, and watch it turn into a real next step." image={conversationImg} alt="Nomi chatting and auto-filling a form" priority />
+      <StorySection title="Nomi opens the browser and gets it done." copy="From picking seats to finishing a booking, Nomi handles the clicks and keeps you posted." image={browserImg} alt="Nomi booking movie tickets in a browser" soft />
+      <StorySection title="Nomi can prepare the purchase. You make the call." copy="Prices can be checked and checkout can be readied, but nothing important happens until you approve it." image={approvalImg} alt="Nomi asking for approval before an order" />
+      <StorySection id="goals" title="Goals that keep moving with you." copy="Nomi keeps sight of what matters and suggests the next move while there is still time." image={goalsImg} alt="Nomi climbing goal cards" soft />
       <StorySection id="connections" title="One Nomi, across the tools you already use." copy="Bring mail, calendar, files, shopping, messages, and more into one calm conversation—with every permission under your control." image={connectorsImg.url} alt="Connected app icons" soft />
 
       <section className="landing-mascot">
-        <Reveal><img src={checksImg.url} alt="Nomi in a blue sweater and sunglasses" loading="lazy" /></Reveal>
+        <Reveal className="landing-mascot-card">
+          <div className="landing-mascot-copy">
+            <CheckMark className="landing-mascot-check" />
+            <h2>Checked. Done. Next.</h2>
+            <p>Nomi ticks things off while you get on with your day.</p>
+          </div>
+          <img src={checksImg.url} alt="Nomi in a blue sweater and sunglasses" loading="lazy" />
+        </Reveal>
       </section>
 
       <section className="landing-final-cta">
