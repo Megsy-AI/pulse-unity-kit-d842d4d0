@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDown, Menu, X } from "lucide-react";
-import Lenis from "lenis";
 import { Button } from "@/components/ui/button";
 import messagingImg from "@/assets/landing/messaging.webp.asset.json";
 import browserImg from "@/assets/landing/browser.webp.asset.json";
@@ -11,12 +10,7 @@ import goalsImg from "@/assets/landing/goals.webp.asset.json";
 import secureImg from "@/assets/landing/secure-storage.webp.asset.json";
 import connectorsImg from "@/assets/landing/connectors.webp.asset.json";
 import checksImg from "@/assets/landing/nomi-checks.png.asset.json";
-import lavender from "@/assets/nomi-look-lavender.webp";
-import mint from "@/assets/nomi-look-mint.webp";
-import peach from "@/assets/nomi-look-peach.webp";
 import ivory from "@/assets/nomi-look-ivory.webp";
-
-const heroLooks = [ivory, peach, mint, lavender];
 
 function CheckMark({ className = "" }: { className?: string }) {
   return (
