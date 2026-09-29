@@ -55,89 +55,33 @@ function StorySection({ id, title, copy, image, alt, soft = false, priority = fa
 
 function useHeavyScroll() {
   useEffect(() => {
-    let target = window.scrollY;
     let raf = 0;
-    let running = false;
-    let touching = false;
-    let lastTouchY = 0;
-    let touchVelocity = 0;
+    let velocity = 0;
 
-    const limit = (value: number) => {
-      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      return Math.max(0, Math.min(max, value));
-    };
-
-    const tick = () => {
-      const current = window.scrollY;
-      const next = current + (target - current) * 0.14;
-      window.scrollTo(0, next);
-      if (Math.abs(target - next) > 0.45) {
-        raf = requestAnimationFrame(tick);
-      } else {
-        window.scrollTo(0, target);
-        running = false;
+    const roll = () => {
+      if (Math.abs(velocity) < 0.15) {
+        velocity = 0;
+        raf = 0;
+        return;
       }
-    };
-
-    const start = () => {
-      if (running) return;
-      running = true;
-      raf = requestAnimationFrame(tick);
+      window.scrollBy(0, velocity);
+      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      if ((window.scrollY <= 0 && velocity < 0) || (window.scrollY >= max && velocity > 0)) velocity = 0;
+      else velocity *= 0.88;
+      raf = requestAnimationFrame(roll);
     };
 
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey) return;
       e.preventDefault();
-      if (!running) target = window.scrollY;
       const delta = Math.max(-120, Math.min(120, e.deltaY));
-      target = limit(target + delta * 1.05);
-      start();
-    };
-
-    const onScroll = () => {
-      if (!running && !touching) target = window.scrollY;
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      if (!touch) return;
-      touching = true;
-      lastTouchY = touch.clientY;
-      touchVelocity = 0;
-      target = window.scrollY;
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      if (!touch || !touching) return;
-      e.preventDefault();
-      const delta = lastTouchY - touch.clientY;
-      lastTouchY = touch.clientY;
-      touchVelocity = touchVelocity * 0.4 + delta * 0.6;
-      target = limit(target + delta * 1.02);
-      window.scrollTo(0, target);
-    };
-
-    const onTouchEnd = () => {
-      if (!touching) return;
-      touching = false;
-      target = limit(target + Math.max(-110, Math.min(110, touchVelocity * 3.5)));
-      start();
+      velocity = Math.max(-30, Math.min(30, velocity + delta * 0.22));
+      if (!raf) raf = requestAnimationFrame(roll);
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
-    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     return () => {
       window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("touchcancel", onTouchEnd);
       cancelAnimationFrame(raf);
     };
   }, []);

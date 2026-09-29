@@ -22,6 +22,7 @@
 - Push notifications for reminders.
 
 ## Current request
+- [x] Remove image-stage clipping and restore native ball-like touch momentum on mobile.
 - [x] Speed up landing scroll slightly, keep a short ball-like glide, and remove image backgrounds/edges.
 - [x] Keep one compact, polished primary button in the welcome opening.
 - [x] Show the Nomi landing page only before setup, then continue through registration and onboarding into chat.
