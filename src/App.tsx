@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 
 import { NomiProvider, useNomi } from "@/nomi/store";
@@ -17,13 +17,25 @@ const AbilitiesPage = lazy(() => import("@/nomi/pages/AbilitiesPage"));
 const PrivacyPage = lazy(() => import("@/nomi/pages/PrivacyPage"));
 const ProjectsPage = lazy(() => import("@/nomi/pages/ProjectsPage"));
 const SettingsPage = lazy(() => import("@/nomi/pages/SettingsPage"));
+const AccountsPage = lazy(() => import("@/nomi/pages/AccountsPage"));
 
 function Guarded({ children }: { children: React.ReactNode }) {
   const { ready, companion } = useNomi();
   const { pathname } = useLocation();
-  if (!ready) return null;
-  if (!companion.onboarded) return <Navigate to="/onboarding" replace state={{ from: pathname }} />;
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (ready && !companion.onboarded) navigate("/onboarding", { replace: true, state: { from: pathname } });
+  }, [ready, companion.onboarded, navigate, pathname]);
+  if (!ready || !companion.onboarded) return null;
   return <NomiShell>{children}</NomiShell>;
+}
+
+function HomeRedirect() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    void navigate("/", { replace: true });
+  }, [navigate]);
+  return null;
 }
 
 function AppRoutes() {
@@ -98,6 +110,10 @@ function AppRoutes() {
           }
         />
         <Route
+          path="/accounts"
+          element={<Guarded><AccountsPage /></Guarded>}
+        />
+        <Route
           path="/settings"
           element={
             <Guarded>
@@ -105,7 +121,7 @@ function AppRoutes() {
             </Guarded>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<HomeRedirect />} />
       </Routes>
     </Suspense>
   );

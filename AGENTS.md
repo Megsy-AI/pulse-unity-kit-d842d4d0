@@ -1,59 +1,15 @@
-# Nomi — Agent Handbook
+# Nomi architecture rules
 
-## 1. What this project is
-
-Nomi — a personal AI companion with a custom cartoon character for every user.
-It is a pure React SPA (react-router-dom) inside a thin TanStack Start shell
-used only for hosting on Lovable.
-
-- `src/routes/__root.tsx` — HTML shell (head, fonts, theme/dir boot script). No page UI.
-- `src/routes/index.tsx` + `src/routes/$.tsx` — mount the SPA (`ssr: false`) for every path.
-- `src/lib/spaMount.tsx` → `src/App.tsx` — the real router (BrowserRouter) and page tree.
-- `src/nomi/**` — everything Nomi: `types.ts`, `i18n.ts`, `intent.ts`, `ai.ts`,
-  `store.tsx` (state), `avatar/` (SVG character + lip sync), `pages/`, `components/`.
-- `src/routes/api/**` — server routes only (no page UI).
-
-Rule: new pages go in `src/nomi/pages` and are wired in `src/App.tsx`.
-Do NOT add files under `src/routes/` except real API endpoints — the router is React Router.
-
-## 2. Backend rules
-
-- External Supabase project `qdnqxjzjecaieuavagvq`. Schema changes go through migrations;
-  never edit `src/integrations/supabase/types.ts` by hand.
-- Every new table, column, function or storage bucket is prefixed `nomi_`.
-  Never drop or alter the legacy Megsy tables that share this database.
-- Nomi data lives in `nomi_companions`, `nomi_tasks`, `nomi_memories`, `nomi_messages`,
-  `nomi_permissions`, `nomi_call_sessions`, all RLS-scoped to `auth.uid()`.
-- Chat runs through the TanStack server route `src/routes/api/nomi-chat.ts` on the Lovable
-  AI Gateway (`LOVABLE_API_KEY`, read inside the handler). New Supabase Edge Functions are
-  not allowed in this stack; `src/nomi/ai.ts` falls back to a local reply when the call fails.
-- Legacy provider keys stay encrypted in `service_keys`; the client never sees a raw key.
-
-## 3. Front-end rules
-
-- State lives in `NomiProvider` (`src/nomi/store.tsx`): localStorage first, Supabase sync
-  when signed in, so the app works signed out too.
-- NomiAvatar uses original seated 3D images with coordinated shape, colour, glasses and clothing presets.
-- The call screen is immersive (no shell) and uses the `.nomi-call-edges` animated frame
-  with `--nomi-edge-intensity` per call state.
-- UI: shadcn, Paper & Cobalt, modest radii, Space Grotesk + DM Sans.
-- First-time landing is a white full-width narrative; signed-in UI keeps Paper & Cobalt.
-- English and Egyptian Arabic are supported.
-- Navigation uses a top bar and on-demand sidebar; account controls and integrations live in Settings.
-
-## 4. Checks before shipping
-
-```bash
-bunx tsgo --noEmit     # types
-bun run build          # production build
-```
-
-Then smoke `/`, `/onboarding`, `/chat`, `/call`, `/tasks`, `/memory`, `/character`,
-`/abilities`, `/privacy` at mobile and desktop width, light and dark.
-
-## 5. Known open items
-
-See `roadmap.md`.
-
-- Auth uses the Nomi face beside uppercase NOMI and a transparent black Megsy logo.
-- Character customization offers ten generated choices per category while preserving Nomi's identity.
+- Nomi is a React SPA mounted through the TanStack Start shell; add UI pages under `src/nomi/pages` and wire them in `src/App.tsx` because React Router owns app navigation.
+- Keep `src/routes` for the SPA mounts and genuine API endpoints only because TanStack hosts rather than structures the Nomi UI.
+- Prefix every new Supabase table, column, function, or bucket with `nomi_`; never modify legacy Megsy data because both products share the external project.
+- Use migrations for schema changes and never edit generated Supabase types manually because the schema is the source of truth.
+- Keep app state local-first in `NomiProvider` with signed-in Supabase sync because Nomi must also work for guests.
+- Use the TanStack `/api/nomi-chat` route and Lovable AI Gateway for chat; do not add Supabase Edge Functions because this stack uses server routes.
+- NomiAvatar uses 121 deterministic full-character images for all 10 glasses × 10 outfits plus plain states; selectors use isolated item art because composited layers overlap.
+- Preserve the immersive call screen and its animated edge frame because it intentionally bypasses the normal shell.
+- Use shadcn, Paper & Cobalt, Space Grotesk + DM Sans, semantic tokens, rounded controls, and black/white button treatments because the app needs one consistent visual system.
+- Support English and Egyptian Arabic in every user-facing addition because both are first-class app languages.
+- Keep the first-time landing white and narrative; authenticated navigation uses a borderless header and on-demand sidebar because the product starts with the companion, not a dashboard.
+- Settings contains language and integrations; non-secret agent account labels and memory each use separate pages because these workflows have distinct privacy expectations.
+- Before shipping, run type checks and production build, then smoke core routes at mobile and desktop widths because the SPA is interaction-heavy.
