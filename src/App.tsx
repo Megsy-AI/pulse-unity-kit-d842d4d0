@@ -32,7 +32,9 @@ function Guarded({ children }: { children: React.ReactNode }) {
 
 function HomeRedirect() {
   const navigate = useNavigate();
-  useEffect(() => navigate("/", { replace: true }), [navigate]);
+  useEffect(() => {
+    void navigate("/", { replace: true });
+  }, [navigate]);
   return null;
 }
 
