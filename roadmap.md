@@ -22,6 +22,7 @@
 - Push notifications for reminders.
 
 ## Current request
+- [x] Restyle sign-in with an uppercase Nomi character logo, transparent black Megsy logo, and two aligned auth buttons.
 - [x] Remove image-stage clipping and restore native ball-like touch momentum on mobile.
 - [x] Speed up landing scroll slightly, keep a short ball-like glide, and remove image backgrounds/edges.
 - [x] Keep one compact, polished primary button in the welcome opening.

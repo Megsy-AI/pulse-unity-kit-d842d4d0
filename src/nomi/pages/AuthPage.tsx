@@ -2,13 +2,13 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import { Mail, X } from "lucide-react";
+import { ArrowLeft, Mail, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import megsyLogo from "@/assets/megsy-logo.jpg.asset.json";
+import ivoryNomi from "@/assets/nomi-look-ivory.webp";
 import { useNomi } from "../store";
-import { NomiAvatar } from "../avatar/NomiAvatar";
+import BrandLogo from "../components/BrandLogo";
 
 export default function AuthPage() {
   const { companion, t } = useNomi();
@@ -53,62 +53,71 @@ export default function AuthPage() {
     if (error) toast.error(error.message);
   };
 
-  const pill = "flex h-14 w-full items-center rounded-full bg-card px-6 text-base font-medium text-foreground shadow-sm transition hover:bg-card/80 disabled:opacity-60";
+  const pill = "relative h-14 w-full rounded-full border-0 bg-card px-6 text-base font-medium text-foreground shadow-sm hover:bg-card/80";
 
   return (
-    <main className="flex min-h-dvh flex-col bg-muted px-5 pb-8 pt-6">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
+    <main className="flex min-h-dvh flex-col bg-muted px-5 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))]">
+      <div className="mx-auto flex min-h-[calc(100dvh-3rem)] w-full max-w-md flex-col">
         <div className="flex justify-end">
-          <Link to="/" aria-label="Close" className="grid size-11 place-items-center rounded-full bg-card shadow-sm">
+          <Button asChild variant="ghost" size="icon" className="size-11 rounded-full bg-card shadow-sm hover:bg-card/80">
+            <Link to="/" aria-label={ar ? "إغلاق" : "Close"}>
             <X className="size-5" />
-          </Link>
+            </Link>
+          </Button>
         </div>
 
-        <div className="flex flex-1 flex-col items-center justify-center">
-          <div className="flex items-center gap-2">
-            <NomiAvatar companion={companion} pose="wave" size={96} />
-            <span className="font-display text-6xl font-bold tracking-tight">nomi</span>
+        <div className="flex flex-1 flex-col items-center justify-center pb-8 pt-10">
+          <div className="flex items-center gap-3" aria-label="NOMI">
+            <span className="relative block size-[5.25rem] shrink-0 overflow-hidden rounded-[42%] bg-card shadow-sm">
+              <img
+                src={ivoryNomi}
+                alt=""
+                className="absolute left-1/2 top-[-3px] w-[6.7rem] max-w-none -translate-x-1/2"
+              />
+            </span>
+            <span className="font-display text-[3.4rem] font-bold leading-none">NOMI</span>
           </div>
-          <div className="mt-4 flex items-center gap-2 text-muted-foreground">
-            <span className="text-lg">By</span>
-            <img src={megsyLogo.url} alt="Megsy" className="size-7 rounded-md" />
-            <span className="font-display text-xl font-semibold text-foreground">megsy</span>
+          <div className="mt-5 flex items-center gap-2.5 text-muted-foreground">
+            <span className="text-base">By</span>
+            <span className="block w-[5.9rem] text-foreground" aria-label="Megsy">
+              <BrandLogo />
+            </span>
           </div>
         </div>
 
         {showEmail ? (
-          <form onSubmit={submit} className="space-y-3">
-            <Input type="email" required placeholder={t("email")} value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-full border-0 bg-card px-6 shadow-sm" autoComplete="email" />
-            <Input type="password" required minLength={6} placeholder={t("password")} value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-full border-0 bg-card px-6 shadow-sm" autoComplete={mode === "in" ? "current-password" : "new-password"} />
-            <Button type="submit" disabled={busy} className="h-14 w-full rounded-full text-base">
+          <form onSubmit={submit} className="space-y-3" dir={ar ? "rtl" : "ltr"}>
+            <Input type="email" required placeholder={t("email")} value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-full border-0 bg-card px-6 text-base shadow-sm" autoComplete="email" />
+            <Input type="password" required minLength={6} placeholder={t("password")} value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-full border-0 bg-card px-6 text-base shadow-sm" autoComplete={mode === "in" ? "current-password" : "new-password"} />
+            <Button type="submit" disabled={busy} className="h-14 w-full rounded-full text-base font-medium">
               {mode === "in" ? t("signIn") : t("signUp")}
             </Button>
-            <div className="flex justify-between px-2 text-sm">
-              <button type="button" onClick={() => setShowEmail(false)} className="text-muted-foreground">{ar ? "رجوع" : "Back"}</button>
-              <button type="button" onClick={() => setMode(mode === "in" ? "up" : "in")} className="text-primary">
+            <div className="flex items-center justify-between px-2 pt-1 text-sm">
+              <Button type="button" variant="link" onClick={() => setShowEmail(false)} className="h-auto gap-1 p-0 text-muted-foreground">
+                <ArrowLeft className="size-4 rtl:rotate-180" />{ar ? "رجوع" : "Back"}
+              </Button>
+              <Button type="button" variant="link" onClick={() => setMode(mode === "in" ? "up" : "in")} className="h-auto p-0 text-primary">
                 {mode === "in" ? (ar ? "إنشاء حساب" : "Create account") : (ar ? "لدي حساب" : "I have an account")}
-              </button>
+              </Button>
             </div>
           </form>
         ) : (
-          <div className="space-y-3">
-            <button type="button" onClick={google} className={pill}>
-              <GoogleIcon />
-              <span className="flex-1 text-center">{ar ? "متابعة باستخدام Google" : "Continue with Google"}</span>
-              <span className="size-6" />
-            </button>
-            <div className="flex items-center gap-4 py-1 text-sm text-muted-foreground">
+          <div className="space-y-3" dir={ar ? "rtl" : "ltr"}>
+            <Button type="button" variant="ghost" onClick={google} className={pill}>
+              <span className="absolute start-6"><GoogleIcon /></span>
+              <span>{ar ? "متابعة باستخدام Google" : "Continue with Google"}</span>
+            </Button>
+            <div className="flex items-center gap-4 px-1 py-0.5 text-sm text-muted-foreground">
               <span className="h-px flex-1 bg-border" />{ar ? "أو" : "or"}<span className="h-px flex-1 bg-border" />
             </div>
-            <button type="button" onClick={() => setShowEmail(true)} className={pill}>
-              <Mail className="size-6" />
-              <span className="flex-1 text-center">{ar ? "متابعة باستخدام البريد الإلكتروني" : "Continue with email"}</span>
-              <span className="size-6" />
-            </button>
+            <Button type="button" variant="ghost" onClick={() => setShowEmail(true)} className={pill}>
+              <Mail className="absolute start-6 size-6" />
+              <span>{ar ? "متابعة باستخدام البريد الإلكتروني" : "Continue with email"}</span>
+            </Button>
           </div>
         )}
 
-        <div className="mt-8 flex justify-center gap-6 text-sm text-muted-foreground underline">
+        <div className="mt-7 flex justify-center gap-7 text-sm text-muted-foreground underline underline-offset-4">
           <Link to="/privacy">{ar ? "سياسة الخصوصية" : "Privacy"}</Link>
           <Link to="/privacy">{ar ? "شروط الخدمة" : "Terms"}</Link>
         </div>
