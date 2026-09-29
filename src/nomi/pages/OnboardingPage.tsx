@@ -7,26 +7,8 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useNomi } from "../store";
 import { NomiAvatar } from "../avatar/NomiAvatar";
-import type { NomiCompanion, NomiShape } from "../types";
-
-const LOOKS: Array<{
-  id: NomiShape;
-  en: string;
-  ar: string;
-  baseColor: string;
-  accentColor: string;
-  glasses: NomiCompanion["glasses"];
-  outfit: NomiCompanion["outfit"];
-  glassesLabel: string;
-  outfitLabel: string;
-}> = [
-  { id: "round", en: "Moon drop", ar: "قطرة القمر", baseColor: "#B7A9F4", accentColor: "#2856D8", glasses: "cobalt-round", outfit: "varsity", glassesLabel: "Cobalt round", outfitLabel: "Varsity" },
-  { id: "robot", en: "Mint pebble", ar: "حصاة نعناع", baseColor: "#BCE9CF", accentColor: "#142C55", glasses: "clear-square", outfit: "hoodie", glassesLabel: "Clear square", outfitLabel: "Hoodie" },
-  { id: "star", en: "Peach star", ar: "نجمة خوخ", baseColor: "#FFA987", accentColor: "#F38CAD", glasses: "pink-heart", outfit: "overalls", glassesLabel: "Pink heart", outfitLabel: "Overalls" },
-  { id: "bear", en: "Ivory cloud", ar: "سحابة عاجي", baseColor: "#F4E8D5", accentColor: "#D52D27", glasses: "black-oval", outfit: "knit", glassesLabel: "Black oval", outfitLabel: "Knit sweater" },
-];
-
-const chooseLook = (look: (typeof LOOKS)[number]) => ({ shape: look.id, baseColor: look.baseColor, accentColor: look.accentColor, glasses: look.glasses, outfit: look.outfit });
+import { CharacterCustomizer } from "../components/CharacterCustomizer";
+import type { NomiCompanion } from "../types";
 
 const PERSONALITIES: Array<{ id: NomiCompanion["personality"]; en: string; ar: string }> = [
   { id: "friendly", en: "Friendly", ar: "ودود" },
@@ -56,6 +38,8 @@ export default function OnboardingPage() {
     navigate("/chat", { replace: true });
   };
 
+  if (step === 0) return <CharacterCustomizer onDone={() => setStep(1)} />;
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col px-5 py-8 md:px-8">
       <div className="flex items-center justify-between border-b border-border pb-5"><span className="font-display text-xl font-bold">Nomi<span className="text-primary">.</span></span><span className="font-display text-xs font-semibold text-muted-foreground">{String(step + 1).padStart(2, "0")} / 04</span></div>
@@ -83,64 +67,6 @@ export default function OnboardingPage() {
         </div>
 
         <div className="animate-nomi-rise space-y-6">
-          {step === 0 ? (
-            <>
-              <div>
-                <p className="mb-3 text-sm font-medium">{ar ? "اختار شخصيتك" : "Choose your character"}</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {LOOKS.map((look) => (
-                    <Button
-                      key={look.id}
-                      type="button"
-                      onClick={() => updateCompanion(chooseLook(look))}
-                      className={cn(
-                        "h-auto min-h-36 flex-col rounded-md border p-2 text-center transition-all",
-                        companion.shape === look.id
-                          ? "border-primary bg-primary-soft"
-                          : "border-border hover:border-primary/40",
-                      )}
-                    >
-                      <NomiAvatar
-                        companion={{ ...companion, ...chooseLook(look) }}
-                        size={100}
-                        floating={false}
-                      />
-                      <span className="mt-1 block text-xs font-medium">
-                        {ar ? look.ar : look.en}
-                      </span>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-3 text-sm font-medium">{ar ? "النظارة" : "Glasses"}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {LOOKS.map((look) => (
-                    <Button
-                      key={look.glasses}
-                      type="button"
-                      onClick={() => updateCompanion(chooseLook(look))}
-                      className={cn(
-                        "rounded-md border px-3 py-2 text-sm",
-                        companion.glasses === look.glasses ? "border-primary bg-primary-soft text-primary" : "border-border",
-                      )}
-                    >{look.glassesLabel}</Button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-3 text-sm font-medium">{ar ? "الملابس" : "Outfit"}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {LOOKS.map((look) => (
-                    <Button key={look.outfit} type="button" variant="outline" onClick={() => updateCompanion(chooseLook(look))} className={cn("rounded-md border px-3 py-2 text-sm", companion.outfit === look.outfit ? "border-primary bg-primary-soft text-primary" : "border-border")}>{look.outfitLabel}</Button>
-                  ))}
-                </div>
-              </div>
-            </>
-          ) : null}
-
           {step === 1 ? (
             <div className="space-y-3">
               <p className="text-sm font-medium">{t("nameLabel")}</p>

@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import { ArrowLeft, Mail, X } from "lucide-react";
+import { ArrowLeft, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,19 +53,13 @@ export default function AuthPage() {
     if (error) toast.error(error.message);
   };
 
-  const pill = "relative h-14 w-full rounded-full border-0 bg-card px-6 text-base font-medium text-foreground shadow-sm hover:bg-card/80";
+  const megsy = () => toast.info(ar ? "تسجيل Megsy قريبًا" : "Megsy sign-in is coming soon");
+
+  const pill = "auth-action relative h-14 w-full rounded-full border-0 bg-card px-6 text-base font-medium text-foreground shadow-sm hover:bg-card/80 active:scale-[0.98]";
 
   return (
     <main className="flex min-h-dvh flex-col bg-muted px-5 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))]">
       <div className="mx-auto flex min-h-[calc(100dvh-3rem)] w-full max-w-md flex-col">
-        <div className="flex justify-end">
-          <Button asChild variant="ghost" size="icon" className="size-11 rounded-full bg-card shadow-sm hover:bg-card/80">
-            <Link to="/" aria-label={ar ? "إغلاق" : "Close"}>
-            <X className="size-5" />
-            </Link>
-          </Button>
-        </div>
-
         <div className="flex flex-1 flex-col items-center justify-center pb-8 pt-10">
           <div className="flex items-center gap-3" aria-label="NOMI">
             <span className="relative block size-[5.25rem] shrink-0 overflow-hidden rounded-[42%] bg-card shadow-sm">
@@ -87,7 +81,7 @@ export default function AuthPage() {
         </div>
 
         {showEmail ? (
-          <form onSubmit={submit} className="space-y-3" dir={ar ? "rtl" : "ltr"}>
+          <form onSubmit={submit} className="animate-auth-swap space-y-3" dir={ar ? "rtl" : "ltr"}>
             <Input type="email" required placeholder={t("email")} value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-full border-0 bg-card px-6 text-base shadow-sm" autoComplete="email" />
             <Input type="password" required minLength={6} placeholder={t("password")} value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-full border-0 bg-card px-6 text-base shadow-sm" autoComplete={mode === "in" ? "current-password" : "new-password"} />
             <Button type="submit" disabled={busy} className="h-14 w-full rounded-full text-base font-medium">
@@ -103,17 +97,18 @@ export default function AuthPage() {
             </div>
           </form>
         ) : (
-          <div className="space-y-3" dir={ar ? "rtl" : "ltr"}>
+          <div className="animate-auth-swap space-y-3" dir={ar ? "rtl" : "ltr"}>
             <Button type="button" variant="ghost" onClick={google} className={pill}>
               <span className="absolute start-6"><GoogleIcon /></span>
               <span>{ar ? "متابعة باستخدام Google" : "Continue with Google"}</span>
             </Button>
-            <div className="flex items-center gap-4 px-1 py-0.5 text-sm text-muted-foreground">
-              <span className="h-px flex-1 bg-border" />{ar ? "أو" : "or"}<span className="h-px flex-1 bg-border" />
-            </div>
             <Button type="button" variant="ghost" onClick={() => setShowEmail(true)} className={pill}>
               <Mail className="absolute start-6 size-6" />
               <span>{ar ? "متابعة باستخدام البريد الإلكتروني" : "Continue with email"}</span>
+            </Button>
+            <Button type="button" variant="ghost" onClick={megsy} className={pill}>
+              <img src={megsyLogo} alt="" className="absolute start-6 h-7 w-6 object-contain" />
+              <span>{ar ? "التسجيل باستخدام Megsy" : "Continue with Megsy"}</span>
             </Button>
           </div>
         )}

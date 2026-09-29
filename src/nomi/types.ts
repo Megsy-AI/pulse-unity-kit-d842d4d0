@@ -1,6 +1,6 @@
 export type NomiShape = "round" | "cat" | "bear" | "star" | "robot";
-export type NomiGlasses = "cobalt-round" | "clear-square" | "pink-heart" | "black-oval";
-export type NomiOutfit = "varsity" | "hoodie" | "overalls" | "knit";
+export type NomiGlasses = "cobalt-round" | "clear-square" | "pink-heart" | "black-oval" | `glasses-${string}`;
+export type NomiOutfit = "varsity" | "hoodie" | "overalls" | "knit" | `outfits-${string}`;
 
 export type NomiPose =
   | "idle"
@@ -27,6 +27,9 @@ export interface NomiCompanion {
   accentColor: string;
   glasses: NomiGlasses;
   outfit: NomiOutfit;
+  hair?: `hair-${string}`;
+  face?: `faces-${string}`;
+  accessory?: `accessories-${string}`;
   personality: NomiPersonality;
   tone: NomiTone;
   language: NomiLanguage;
