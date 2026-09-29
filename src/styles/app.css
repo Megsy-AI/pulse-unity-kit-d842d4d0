@@ -422,7 +422,7 @@
 
 .nomi-header-bob { animation: nomi-header-bob 2.6s ease-in-out infinite; }
 .nomi-wave-greeting { animation: nomi-greeting-wave 2.8s ease-in-out infinite; }
-.nomi-chat-avatar img { transform: scale(1.12); transform-origin: center bottom; }
+.nomi-chat-avatar img { transform-origin: center bottom; }
 .nomi-pixel-wordmark {
   font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   text-shadow: 2px 0 0 currentColor;

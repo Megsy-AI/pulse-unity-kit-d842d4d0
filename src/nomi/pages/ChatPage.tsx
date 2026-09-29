@@ -4,7 +4,6 @@ import { ArrowUp, Link2, Phone, Plus } from "lucide-react";
 
 import { Conversation, ConversationContent, ConversationScrollButton } from "@/components/ai-elements/conversation";
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
-import { PromptInput, PromptInputFooter, PromptInputTextarea, PromptInputTools } from "@/components/ai-elements/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -35,8 +34,8 @@ export default function ChatPage() {
       <main className="relative mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col px-4 md:px-8">
         {empty ? (
           <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto pb-6 text-center">
-            <div className="grid h-44 w-44 place-items-center overflow-visible md:h-52 md:w-52"><NomiAvatar companion={companion} pose="wave" size={208} floating={false} className="nomi-wave-greeting nomi-chat-avatar" /></div>
-            <h1 className="mt-1 max-w-xl text-2xl font-bold leading-tight md:text-4xl">{welcome}</h1>
+            <div className="grid h-52 w-52 place-items-center md:h-56 md:w-56"><NomiAvatar companion={companion} pose="wave" size={196} floating={false} className="nomi-wave-greeting nomi-chat-avatar" /></div>
+            <h1 className="mt-3 max-w-xl text-2xl font-bold leading-tight md:text-4xl">{welcome}</h1>
           </div>
         ) : (
           <Conversation className="min-h-0 flex-1"><ConversationContent className="mx-auto w-full max-w-3xl gap-7 px-1 py-7 md:px-4">
@@ -47,13 +46,22 @@ export default function ChatPage() {
 
         <div className="relative z-10 mx-auto mb-5 w-full max-w-3xl">
           {requestedIntegration && !permissions.calendar ? <div className="mb-3 flex items-center gap-3 rounded-2xl border border-border bg-card p-3"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary"><Link2 className="size-4" /></span><span className="min-w-0 flex-1 text-start"><span className="block text-sm font-semibold">{ar ? "وصّل التطبيق الذي يحتاجه نومي" : "Connect the app Nomi needs"}</span><span className="block text-xs text-muted-foreground">{ar ? "لن يحدث شيء بدون موافقتك." : "Nothing happens without your approval."}</span></span><Button size="sm" variant="outline" onClick={() => setPermission("calendar", true)}>{ar ? "سماح" : "Allow"}</Button></div> : null}
-          <PromptInput onSubmit={({ text }) => submit(text)} className={cn("group/composer w-full border-border bg-card shadow-sm transition-[border-radius,box-shadow,transform] duration-300", focused || draft.trim() ? "rounded-[1.65rem] shadow-[var(--shadow-composer)]" : "rounded-full")}>
-            <PromptInputTextarea value={draft} onChange={(event) => setDraft(event.target.value)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} placeholder={t("askPlaceholder")} className={cn("max-h-40 px-5 text-[15px] transition-[min-height,padding] duration-300", focused || draft.trim() ? "min-h-16 pt-4" : "min-h-11 py-3")} />
-            <PromptInputFooter className={cn("px-2.5 transition-[padding] duration-300", focused || draft.trim() ? "pb-2.5" : "pb-2")}>
-              <PromptInputTools><Button type="button" size="icon-sm" variant="ghost" aria-label={ar ? "إضافة" : "Add"} className="size-8 border border-border bg-secondary/50"><Plus className="size-4" /></Button></PromptInputTools>
+          <form onSubmit={(event) => { event.preventDefault(); submit(draft); }} className={cn("flex w-full border border-border bg-card shadow-sm transition-[border-radius,box-shadow,padding] duration-300", focused || draft.trim() ? "flex-col rounded-[1.65rem] p-2.5 shadow-[var(--shadow-composer)]" : "h-14 flex-row items-center rounded-full px-2")}>
+            <textarea
+              value={draft}
+              rows={1}
+              onChange={(event) => setDraft(event.target.value)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submit(draft); } }}
+              placeholder={t("askPlaceholder")}
+              className={cn("min-w-0 flex-1 resize-none bg-transparent px-3 text-[15px] outline-none placeholder:text-muted-foreground", focused || draft.trim() ? "max-h-40 min-h-16 py-2" : "h-10 py-2.5")}
+            />
+            <div className={cn("flex items-center justify-between gap-2", focused || draft.trim() ? "pt-1" : "contents")}>
+              <Button type="button" size="icon-sm" variant="ghost" aria-label={ar ? "إضافة" : "Add"} className={cn("size-8 border border-border bg-secondary/50", !(focused || draft.trim()) && "order-first")}><Plus className="size-4" /></Button>
               {draft.trim() ? <Button type="submit" size="icon-sm" disabled={thinking} aria-label={t("send")} className="size-9"><ArrowUp className="size-4" /></Button> : <Button asChild type="button" size="icon-sm" variant="ghost" aria-label={ar ? "اتصل بنومي" : "Call Nomi"} className="size-9 bg-secondary/60"><Link to="/call"><Phone className="size-4" /></Link></Button>}
-            </PromptInputFooter>
-          </PromptInput>
+            </div>
+          </form>
         </div>
       </main>
     </div>
