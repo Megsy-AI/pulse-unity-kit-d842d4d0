@@ -18,6 +18,7 @@ const PrivacyPage = lazy(() => import("@/nomi/pages/PrivacyPage"));
 const ProjectsPage = lazy(() => import("@/nomi/pages/ProjectsPage"));
 const SettingsPage = lazy(() => import("@/nomi/pages/SettingsPage"));
 const AccountsPage = lazy(() => import("@/nomi/pages/AccountsPage"));
+const PremiumPage = lazy(() => import("@/nomi/pages/PremiumPage"));
 
 function Guarded({ children }: { children: React.ReactNode }) {
   const { ready, companion } = useNomi();
@@ -121,6 +122,7 @@ function AppRoutes() {
             </Guarded>
           }
         />
+        <Route path="/premium" element={<Guarded><PremiumPage /></Guarded>} />
         <Route path="*" element={<HomeRedirect />} />
       </Routes>
     </Suspense>

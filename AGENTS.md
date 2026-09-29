@@ -11,5 +11,5 @@
 - Use shadcn, Paper & Cobalt, Space Grotesk + DM Sans, semantic tokens, rounded controls, and black/white button treatments because the app needs one consistent visual system.
 - Support English and Egyptian Arabic in every user-facing addition because both are first-class app languages.
 - Keep the first-time landing white and narrative; authenticated navigation uses a borderless header and on-demand sidebar because the product starts with the companion, not a dashboard.
-- Settings contains language and integrations; non-secret agent account labels and memory each use separate pages because these workflows have distinct privacy expectations.
+- Settings contains language/integrations; accounts, memory, and unpriced Premium use separate pages for privacy and factual pricing.
 - Before shipping, run type checks and production build, then smoke core routes at mobile and desktop widths because the SPA is interaction-heavy.
