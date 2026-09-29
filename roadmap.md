@@ -22,6 +22,7 @@
 - Push notifications for reminders.
 
 ## Current request
+- [ ] Prevent option artwork from overlapping or escaping its tile, and verify every live character layer.
 - [x] Redesign authentication transitions and rebuild character creation with ten choices per category.
 - [x] Restyle sign-in with an uppercase Nomi character logo, transparent black Megsy logo, and two aligned auth buttons.
 - [x] Remove image-stage clipping and restore native ball-like touch momentum on mobile.
