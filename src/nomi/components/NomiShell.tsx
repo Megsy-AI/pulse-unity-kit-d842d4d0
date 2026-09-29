@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { FolderKanban, ListChecks, MessageCircle, PanelsTopLeft, Settings, UserRoundCog } from "lucide-react";
+import { FolderKanban, ListChecks, MessageCircle, PanelLeft, Search, Settings, SquarePen, UserRoundCog } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -16,15 +16,19 @@ const NAV = [
 ] as const;
 
 function SidebarContent({ close }: { close: () => void }) {
-  const { companion, session, t } = useNomi();
+  const { companion, session, t, messages, clearChat } = useNomi();
+  const [query, setQuery] = useState("");
   const ar = companion.language === "ar";
   const userName = session?.user?.email?.split("@")[0] || (ar ? "حسابي" : "My account");
 
   return (
     <div className="flex h-full flex-col">
-      <div className="px-3 pb-7 pt-2">
-        <span className="nomi-pixel-wordmark text-2xl font-black tracking-[0.18em]">NOMI</span>
+      <div className="flex h-14 items-center justify-between px-2">
+        <span className="nomi-pixel-wordmark text-xl font-black">NOMI</span>
       </div>
+      <Button variant="ghost" className="mb-2 h-10 w-full justify-start rounded-xl px-3" onClick={() => { clearChat(); close(); }}>
+        <SquarePen className="size-[17px]" />{ar ? "محادثة جديدة" : "New chat"}
+      </Button>
       <nav className="space-y-0.5">
         {NAV.map(({ to, key, icon: Icon }) => (
           <NavLink key={to} to={to} onClick={close} className={({ isActive }) => cn("flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-all duration-200", isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground")}>
@@ -34,7 +38,20 @@ function SidebarContent({ close }: { close: () => void }) {
         ))}
       </nav>
 
-      <div className="mt-5 space-y-0.5 border-t border-border pt-4">
+      <div className="mt-4 min-h-0 flex-1 border-t border-border/70 pt-3">
+        <label className="mb-2 flex h-9 items-center gap-2 rounded-xl px-3 text-muted-foreground focus-within:bg-secondary/70 focus-within:text-foreground">
+          <Search className="size-4" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={ar ? "ابحث في المحادثات" : "Search chats"} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
+        </label>
+        <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase text-muted-foreground">{ar ? "الأخيرة" : "Recent"}</p>
+        <div className="max-h-36 overflow-y-auto px-1">
+          {messages.filter((message) => message.role === "user" && message.content.toLowerCase().includes(query.toLowerCase())).slice(-6).reverse().map((message) => (
+            <NavLink key={message.id} to="/chat" onClick={close} className="block truncate rounded-lg px-2 py-2 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground">{message.content}</NavLink>
+          ))}
+          {!messages.some((message) => message.role === "user") ? <p className="px-2 py-3 text-xs text-muted-foreground">{ar ? "مفيش محادثات لسه" : "No conversations yet"}</p> : null}
+        </div>
+      </div>
+
+      <div className="space-y-0.5 border-t border-border pt-3">
         <NavLink to="/accounts" onClick={close} className={({ isActive }) => cn("flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors", isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground")}>
           <UserRoundCog className="size-[18px]" />{ar ? "حسابات الوكيل" : "Agent accounts"}
         </NavLink>
@@ -43,7 +60,7 @@ function SidebarContent({ close }: { close: () => void }) {
         </NavLink>
       </div>
 
-      <NavLink to="/settings" onClick={close} className="mt-auto flex items-center gap-3 rounded-2xl bg-secondary/60 p-2.5 transition-colors hover:bg-secondary">
+      <NavLink to="/settings" onClick={close} className="mt-3 flex items-center gap-3 rounded-2xl bg-secondary/60 p-2.5 transition-colors hover:bg-secondary">
         <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-card"><NomiAvatar companion={companion} size={54} floating={false} /></span>
         <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{userName}</span><span className="block truncate text-xs text-muted-foreground">{session?.user?.email || (ar ? "وضع الضيف" : "Guest mode")}</span></span>
       </NavLink>
@@ -64,12 +81,12 @@ export function NomiShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-dvh flex-col bg-background">
       <header className="relative z-20 flex h-16 shrink-0 items-center justify-between bg-transparent px-4 md:px-6">
         <Button variant="ghost" size="icon" className="size-10 border-0 bg-transparent shadow-none hover:bg-transparent" onClick={() => setMenuOpen(true)} aria-label={ar ? "فتح القائمة" : "Open menu"}>
-          <PanelsTopLeft className="size-[18px]" />
+          <PanelLeft className="size-[18px]" />
         </Button>
         <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-2 sm:flex"><NomiAvatar companion={companion} pose="celebrate" size={44} floating={false} className="nomi-header-bob" /><span className="text-xs font-semibold text-muted-foreground">{ar ? "جرّب قدرات أكثر" : "More from Nomi"}</span></div>
-          <Button asChild variant="ghost" size="sm" className="h-10 gap-1.5 border-0 bg-transparent px-2.5 text-foreground shadow-none hover:bg-secondary/60">
-            <NavLink to="/premium"><PremiumStar className="size-7" /><span>Premium</span></NavLink>
+          <div className="hidden items-center sm:flex"><NomiAvatar companion={companion} pose="celebrate" size={42} floating={false} className="nomi-header-bob" /></div>
+          <Button asChild variant="ghost" size="sm" className="h-10 gap-0 border-0 bg-transparent px-1.5 text-foreground shadow-none hover:bg-secondary/60">
+            <NavLink to="/premium"><PremiumStar className="h-9 w-12" /><span>Premium</span></NavLink>
           </Button>
         </div>
       </header>
