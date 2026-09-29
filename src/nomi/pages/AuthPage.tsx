@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import ivoryNomi from "@/assets/nomi-look-ivory.webp";
+import megsyLogo from "@/assets/megsy-logo-black.png";
 import { useNomi } from "../store";
-import BrandLogo from "../components/BrandLogo";
 
 export default function AuthPage() {
   const { companion, t } = useNomi();
@@ -79,8 +79,9 @@ export default function AuthPage() {
           </div>
           <div className="mt-5 flex items-center gap-2.5 text-muted-foreground">
             <span className="text-base">By</span>
-            <span className="block w-[5.9rem] text-foreground" aria-label="Megsy">
-              <BrandLogo />
+            <span className="flex items-center gap-1.5 text-foreground" aria-label="Megsy">
+              <img src={megsyLogo} alt="" className="h-7 w-6 object-contain" />
+              <span className="font-display text-xl font-semibold">megsy</span>
             </span>
           </div>
         </div>
