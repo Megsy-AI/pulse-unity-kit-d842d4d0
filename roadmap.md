@@ -22,6 +22,10 @@
 - Push notifications for reminders.
 
 ## Current request
+- [ ] Show accessory-only circular thumbnails, complete every glasses/outfit combination, and route straight to chat after selection.
+- [ ] Generate ten distinct cute glasses and ten distinct cute outfits while preserving Nomi's exact identity.
+- [ ] Redesign chat, settings, and the on-demand sidebar with a clean rounded shadcn interface.
+- [ ] Standardize application actions to black-on-white or white-on-black button treatments.
 - [x] Prevent option artwork from overlapping or escaping its tile, and verify every live character layer.
 - [x] Redesign authentication transitions and rebuild character creation with ten choices per category.
 - [x] Restyle sign-in with an uppercase Nomi character logo, transparent black Megsy logo, and two aligned auth buttons.
