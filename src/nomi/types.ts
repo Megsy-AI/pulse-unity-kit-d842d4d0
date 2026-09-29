@@ -1,6 +1,6 @@
 export type NomiShape = "round" | "cat" | "bear" | "star" | "robot";
-export type NomiGlasses = "cobalt-round" | "clear-square" | "pink-heart" | "black-oval" | `glasses-${string}`;
-export type NomiOutfit = "varsity" | "hoodie" | "overalls" | "knit" | `outfits-${string}`;
+export type NomiGlasses = "none" | "cobalt-round" | "clear-square" | "pink-heart" | "black-oval" | `glasses-${string}`;
+export type NomiOutfit = "none" | "varsity" | "hoodie" | "overalls" | "knit" | `outfits-${string}`;
 
 export type NomiPose =
   | "idle"
@@ -27,9 +27,9 @@ export interface NomiCompanion {
   accentColor: string;
   glasses: NomiGlasses;
   outfit: NomiOutfit;
-  hair?: `hair-${string}`;
-  face?: `faces-${string}`;
-  accessory?: `accessories-${string}`;
+  hair?: "none" | `hair-${string}`;
+  face?: "none" | `faces-${string}`;
+  accessory?: "none" | `accessories-${string}`;
   personality: NomiPersonality;
   tone: NomiTone;
   language: NomiLanguage;
@@ -101,8 +101,11 @@ export const DEFAULT_COMPANION: NomiCompanion = {
   shape: "round",
   baseColor: "#7C5CFF",
   accentColor: "#FFB86B",
-  glasses: "cobalt-round",
-  outfit: "varsity",
+  glasses: "none",
+  outfit: "none",
+  hair: "none",
+  face: "none",
+  accessory: "none",
   personality: "friendly",
   tone: "warm",
   language: "en",
