@@ -54,3 +54,5 @@ Then smoke `/`, `/onboarding`, `/chat`, `/call`, `/tasks`, `/memory`, `/characte
 ## 5. Known open items
 
 See `roadmap.md`.
+
+- Keep the auth screen logo image-based: crop the existing Nomi character face beside uppercase NOMI and render the vector Megsy logo via currentColor so it stays transparent and theme-safe.
