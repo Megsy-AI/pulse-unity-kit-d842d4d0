@@ -22,7 +22,7 @@
 - Push notifications for reminders.
 
 ## Current request
-- [ ] Speed up landing scroll slightly, keep a short ball-like glide, and remove image backgrounds/edges.
+- [x] Speed up landing scroll slightly, keep a short ball-like glide, and remove image backgrounds/edges.
 - [x] Keep one compact, polished primary button in the welcome opening.
 - [x] Show the Nomi landing page only before setup, then continue through registration and onboarding into chat.
 - [x] Remove bottom navigation and replace it with a clean top bar and responsive sidebar.
