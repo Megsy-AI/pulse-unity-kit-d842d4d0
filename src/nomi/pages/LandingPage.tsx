@@ -175,9 +175,8 @@ export default function LandingPage() {
             Meet <span className="landing-nomi-word">nomi<img src={ivory} alt="Nomi" className="landing-nomi-sitter" /></span>, your AI
           </motion.h1>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={topVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.7, delay: 0.2 }}><RotatingPromise index={index} /></motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={topVisible ? { opacity: 1 } : undefined} transition={{ duration: 0.6, delay: 0.6 }} className="flex flex-wrap items-center justify-center gap-3">
-            <Button size="lg" className="landing-hero-cta h-14 rounded-full px-10 text-base" onClick={() => navigate("/auth")}>Create your Nomi</Button>
-            <Button size="lg" variant="outline" className="h-14 rounded-full border-landing-ink bg-landing-surface px-8 text-landing-ink hover:bg-landing-ink hover:text-landing-on-dark" onClick={() => navigate("/auth")}>Sign in</Button>
+          <motion.div initial={{ opacity: 0 }} animate={topVisible ? { opacity: 1 } : undefined} transition={{ duration: 0.6, delay: 0.6 }}>
+            <Button className="landing-hero-cta h-11 rounded-full px-7 text-sm font-medium" onClick={() => navigate("/auth")}>Create your Nomi</Button>
           </motion.div>
           <a href="#conversation" aria-label="See what Nomi can do" className="landing-scroll-cue"><span>See what Nomi can do</span><ArrowDown className="size-4" /></a>
         </div>
