@@ -331,14 +331,13 @@ export function NomiProvider({ children }: { children: ReactNode }) {
 
   /* ------------------------------------------------------------ actions */
   const updateCompanion = useCallback(
-    (patch: Partial<NomiCompanion>) =>
-      setCompanion((prev) => {
-        const next = { ...prev, ...patch };
-        if (userId)
-          void supabase.from("nomi_companions").upsert(companionRow(next, userId), { onConflict: "user_id" }).then(logErr("companion"));
-        return next;
-      }),
-    [userId, companionRow],
+    (patch: Partial<NomiCompanion>) => {
+      const next = { ...companion, ...patch };
+      setCompanion(next);
+      if (userId)
+        void supabase.from("nomi_companions").upsert(companionRow(next, userId), { onConflict: "user_id" }).then(logErr("companion"));
+    },
+    [companion, userId, companionRow],
   );
 
   const markSpeaking = useCallback((text: string) => {

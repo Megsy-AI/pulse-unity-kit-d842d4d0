@@ -55,4 +55,5 @@ Then smoke `/`, `/onboarding`, `/chat`, `/call`, `/tasks`, `/memory`, `/characte
 
 See `roadmap.md`.
 
-- Keep the auth screen logo image-based: crop the existing Nomi character face beside uppercase NOMI and render the vector Megsy logo via currentColor so it stays transparent and theme-safe.
+- Auth uses the Nomi face beside uppercase NOMI and a transparent black Megsy logo.
+- Character customization offers ten generated choices per category while preserving Nomi's identity.
