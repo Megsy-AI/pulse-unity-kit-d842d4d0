@@ -115,13 +115,13 @@ function useHeavyScroll() {
       lastTouchY = touch.clientY;
       touchVelocity = touchVelocity * 0.45 + delta * 0.55;
       target = limit(target + delta * 0.84);
-      start();
+      window.scrollTo(0, target);
     };
 
     const onTouchEnd = () => {
       if (!touching) return;
       touching = false;
-      target = limit(target + Math.max(-90, Math.min(90, touchVelocity * 3.2)));
+      target = limit(target + Math.max(-55, Math.min(55, touchVelocity * 2)));
       start();
     };
 
