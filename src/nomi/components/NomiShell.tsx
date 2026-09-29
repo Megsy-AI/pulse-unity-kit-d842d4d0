@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Brain, FolderKanban, Gem, ListChecks, MessageCircle, PanelsTopLeft, Settings, UserRoundCog } from "lucide-react";
+import { FolderKanban, Gem, ListChecks, MessageCircle, PanelsTopLeft, Settings, UserRoundCog } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -34,9 +34,6 @@ function SidebarContent({ close }: { close: () => void }) {
       </nav>
 
       <div className="mt-6 space-y-1.5 border-t border-border pt-5">
-        <NavLink to="/memory" onClick={close} className={({ isActive }) => cn("flex h-12 items-center gap-3 rounded-2xl px-4 text-sm font-semibold transition-colors", isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
-          <Brain className="size-[18px]" />{ar ? "الذاكرة" : "Memory"}
-        </NavLink>
         <NavLink to="/accounts" onClick={close} className={({ isActive }) => cn("flex h-12 items-center gap-3 rounded-2xl px-4 text-sm font-semibold transition-colors", isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
           <UserRoundCog className="size-[18px]" />{ar ? "حسابات الوكيل" : "Agent accounts"}
         </NavLink>
