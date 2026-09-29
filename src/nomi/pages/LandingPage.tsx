@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDown, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import conversationImg from "@/assets/landing/conversation-transparent.png";
-import browserImg from "@/assets/landing/browser-transparent.png";
-import approvalImg from "@/assets/landing/approval-transparent.png";
-import goalsImg from "@/assets/landing/goals-transparent.png";
+import conversationImg from "@/assets/landing/conversation-transparent-fixed.png";
+import browserImg from "@/assets/landing/browser-transparent-fixed.png";
+import approvalImg from "@/assets/landing/approval-transparent-fixed.png";
+import goalsImg from "@/assets/landing/goals-transparent-fixed.png";
 import connectorsImg from "@/assets/landing/connectors.webp.asset.json";
 import ivory from "@/assets/nomi-look-ivory.webp";
 
@@ -69,7 +69,7 @@ function useHeavyScroll() {
 
     const tick = () => {
       const current = window.scrollY;
-      const next = current + (target - current) * 0.17;
+      const next = current + (target - current) * 0.14;
       window.scrollTo(0, next);
       if (Math.abs(target - next) > 0.45) {
         raf = requestAnimationFrame(tick);
@@ -90,7 +90,7 @@ function useHeavyScroll() {
       e.preventDefault();
       if (!running) target = window.scrollY;
       const delta = Math.max(-120, Math.min(120, e.deltaY));
-      target = limit(target + delta * 0.84);
+      target = limit(target + delta * 1.05);
       start();
     };
 
@@ -113,15 +113,15 @@ function useHeavyScroll() {
       e.preventDefault();
       const delta = lastTouchY - touch.clientY;
       lastTouchY = touch.clientY;
-      touchVelocity = touchVelocity * 0.45 + delta * 0.55;
-      target = limit(target + delta * 0.84);
+      touchVelocity = touchVelocity * 0.4 + delta * 0.6;
+      target = limit(target + delta * 1.02);
       window.scrollTo(0, target);
     };
 
     const onTouchEnd = () => {
       if (!touching) return;
       touching = false;
-      target = limit(target + Math.max(-55, Math.min(55, touchVelocity * 2)));
+      target = limit(target + Math.max(-110, Math.min(110, touchVelocity * 3.5)));
       start();
     };
 
