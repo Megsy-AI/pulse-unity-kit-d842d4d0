@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDown, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import conversationImg from "@/assets/landing/conversation-transparent-fixed.png";
-import browserImg from "@/assets/landing/browser-transparent-fixed.png";
-import approvalImg from "@/assets/landing/approval-transparent-fixed.png";
-import goalsImg from "@/assets/landing/goals-transparent-fixed.png";
+import conversationImg from "@/assets/landing/conversation-v2.png";
+import browserImg from "@/assets/landing/browser-v2.png";
+import approvalImg from "@/assets/landing/approval-v2.png";
+import goalsImg from "@/assets/landing/goals-v2.png";
 import connectorsImg from "@/assets/landing/connectors.webp.asset.json";
 import ivory from "@/assets/nomi-look-ivory.webp";
 
