@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 
 import { NomiProvider, useNomi } from "@/nomi/store";
@@ -32,11 +32,7 @@ function Guarded({ children }: { children: React.ReactNode }) {
 }
 
 function HomeRedirect() {
-  const navigate = useNavigate();
-  useEffect(() => {
-    void navigate("/", { replace: true });
-  }, [navigate]);
-  return null;
+  return <Navigate to="/" replace />;
 }
 
 function AppRoutes() {
