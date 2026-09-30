@@ -428,7 +428,7 @@
   text-shadow: 2px 0 0 currentColor;
 }
 
-.premium-star-loader { --fill-color: var(--premium); --shine-color: var(--premium-shine); position: relative; display: inline-block; flex: none; transform: scale(.5); transform-origin: center; filter: drop-shadow(0 0 10px var(--shine-color)); }
+.premium-star-loader { --fill-color: #5c3d99; --shine-color: #5c3d9933; position: relative; display: inline-block; flex: none; transform: scale(.5); transform-origin: center; filter: drop-shadow(0 0 10px var(--shine-color)); }
 .premium-star-loader svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .premium-star-loader svg g path:first-child { fill: var(--fill-color); }
 .premium-star-loader #pegtopone { position: absolute; animation: flowe-one 1s linear infinite; }
