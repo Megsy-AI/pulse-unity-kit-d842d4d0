@@ -85,9 +85,9 @@ export function NomiShell({ children }: { children: ReactNode }) {
         </Button>
         <div className="flex items-center gap-2">
           <div className="hidden items-center sm:flex"><NomiAvatar companion={companion} pose="celebrate" size={42} floating={false} className="nomi-header-bob" /></div>
-          <Button asChild variant="ghost" size="sm" className="h-10 gap-0 border-0 bg-transparent px-1.5 text-foreground shadow-none hover:bg-secondary/60">
+          {pathname !== "/premium" ? <Button asChild variant="ghost" size="sm" className="h-10 gap-0 border-0 bg-transparent px-1.5 text-foreground shadow-none hover:bg-secondary/60">
             <NavLink to="/premium"><PremiumStar className="h-9 w-12" /><span>Premium</span></NavLink>
-          </Button>
+          </Button> : null}
         </div>
       </header>
       <div className="min-h-0 flex-1">{children}</div>

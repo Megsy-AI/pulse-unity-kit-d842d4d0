@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 
 import { NomiProvider, useNomi } from "@/nomi/store";
@@ -23,20 +23,13 @@ const PremiumPage = lazy(() => import("@/nomi/pages/PremiumPage"));
 function Guarded({ children }: { children: React.ReactNode }) {
   const { ready, companion } = useNomi();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (ready && !companion.onboarded) navigate("/onboarding", { replace: true, state: { from: pathname } });
-  }, [ready, companion.onboarded, navigate, pathname]);
-  if (!ready || !companion.onboarded) return null;
+  if (!ready) return null;
+  if (!companion.onboarded) return <Navigate to="/onboarding" replace state={{ from: pathname }} />;
   return <NomiShell>{children}</NomiShell>;
 }
 
 function HomeRedirect() {
-  const navigate = useNavigate();
-  useEffect(() => {
-    void navigate("/", { replace: true });
-  }, [navigate]);
-  return null;
+  return <Navigate to="/" replace />;
 }
 
 function AppRoutes() {

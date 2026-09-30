@@ -29,14 +29,14 @@ export function NomiComposer({ value, onChange, onSend, busy, placeholder, ar }:
   }, [value]);
 
   return (
-    <motion.form
-      layout
+      <motion.form
       onSubmit={(event) => {
         event.preventDefault();
         onSend();
       }}
       className={cn("nomi-composer", expanded && "nomi-composer-expanded")}
-      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+        animate={{ borderRadius: expanded ? 24 : 999 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <textarea
         ref={textareaRef}
